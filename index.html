@@ -722,7 +722,8 @@
 
             // 1. public/user_ids 컬렉션에서 friendGeneratedId에 해당하는 userId 찾기
             // Firestore SDK v8 방식: db 인스턴스를 통해 컬렉션 및 문서 참조
-            const publicUserIdRef = db.collection('artifacts').doc(appId).collection('public').doc('data').collection('user_ids').doc(friendGeneratedId);
+            const publicUserIdsCollectionPath = `artifacts/${appId}/public/data/user_ids`;
+            const publicUserIdRef = db.collection(publicUserIdsCollectionPath).doc(friendGeneratedId);
             let friendUserId = null;
             try {
                 const docSnap = await publicUserIdRef.get();
