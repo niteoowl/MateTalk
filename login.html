@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>N-MATE | 로그인</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Pretendard 웹폰트 적용 */
+        @font-face {
+            font-family: 'Pretendard-Regular';
+            src: url('https://fastly.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff') format('woff');
+            font-weight: 400;
+            font-style: normal;
+        }
+
+        /* Pretendard 폰트를 기본으로 사용하고, Inter 및 sans-serif를 폴백으로 설정합니다. */
+        body {
+            font-family: 'Pretendard-Regular', 'Inter', sans-serif;
+            background-color: #ffffff; /* 배경색을 이미지와 동일하게 설정 */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh; /* 뷰포트 높이 전체를 차지하도록 설정 */
+            margin: 0;
+            padding: 0;
+            overflow: hidden; /* 스크롤바가 생기지 않도록 숨김 */
+        }
+
+        /* 컨테이너의 최대 너비를 설정하여 좌우 여백을 시뮬레이션합니다. */
+        .container {
+            width: 100%;
+            max-width: 1920px; /* 콘텐츠 영역의 최대 너비를 1920px로 더욱 증가 */
+            padding: 0; /* 좌우 패딩 제거 */
+            box-sizing: border-box; /* 패딩이 너비에 포함되도록 설정 */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh; /* 컨테이너가 뷰포트 높이의 100%를 차지하도록 설정 */
+            position: relative; /* 자식 요소의 절대 위치를 위한 기준 */
+        }
+
+        /* 로고 및 텍스트 블록의 위치 조정 - 완벽한 중앙 정렬 */
+        .logo-text-block {
+            position: absolute; /* 컨테이너 내에서 절대 위치 지정 */
+            top: 25%; /* 대략적인 상단 위치 조정 */
+            left: 50%; /* 왼쪽에서 50% 이동 */
+            transform: translate(-50%, -50%); /* 자신의 너비/높이의 50%만큼 이동하여 정확히 중앙 정렬 */
+            text-align: center; /* 텍스트 중앙 정렬 */
+            line-height: 1.4; /* 줄 간격 조정 */
+        }
+
+        /* 로그인 버튼의 위치 조정 및 너비 조정 */
+        .login-button-block {
+            position: absolute; /* 컨테이너 내에서 절대 위치 지정 */
+            /* 기존 bottom: 10% 에 safe-area-inset-bottom을 더하여 하단 UI에 가리지 않도록 합니다. */
+            bottom: calc(10% + env(safe-area-inset-bottom, 20px)); /* 최소 20px 안전 여백 보장 */
+            left: 50%; /* 가운데 정렬을 위해 왼쪽에서 50% 이동 */
+            transform: translate(-50%, 0); /* 자신의 너비의 50%만큼 이동하여 정확히 중앙 정렬 */
+            width: calc(100% - 40px); /* 좌우 20px 패딩을 고려하여 너비 조정 */
+            max-width: 400px; /* 버튼의 최대 너비를 400px로 유지 */
+            padding: 0 20px; /* 모바일에서 좌우 여백 추가 */
+            box-sizing: border-box; /* 패딩이 너비에 포함되도록 설정 */
+        }
+
+        /* 이미지 아이콘 스타일 */
+        .logo-image {
+            width: 48px; /* 이미지 아이콘 너비 */
+            height: 48px; /* 이미지 아이콘 높이 */
+            margin-bottom: 12px; /* 로고와 텍스트 사이 간격 */
+        }
+
+        /* 로그인 버튼 스타일 */
+        .login-button {
+            background-color: #3B82F6; /* 버튼 배경색 */
+            color: white;
+            font-weight: 500; /* Medium */
+            padding: 10px 28px; /* 패딩 조정 (세로 패딩을 줄여 높이 낮춤) */
+            border-radius: 14px; /* 모서리 둥글기 조정 (약간 둥글게) */
+            width: 100%; /* 부모 요소의 너비를 100% 차지하도록 */
+            transition: background-color 0.3s ease; /* 호버 효과를 위한 트랜지션 */
+        }
+
+        .login-button:hover {
+            background-color: #2563EB; /* 호버 시 버튼 색상 변경 */
+        }
+
+        /* 텍스트 크기 및 색상 조정 */
+        .main-title {
+            font-size: 1.5rem; /* 24px */
+            font-weight: 600; /* SemiBold */
+            color: #333333; /* 짙은 회색으로 변경 */
+            margin-bottom: 0.5rem; /* 8px */
+            white-space: nowrap; /* 글자 줄 바꿈 방지 */
+            overflow: hidden; /* 넘치는 내용 숨기기 */
+            text-overflow: ellipsis; /* 넘치는 내용 말줄임표 처리 */
+        }
+
+        .subtitle {
+            font-size: 0.875rem; /* 14px */
+            color: #666666; /* 중간 회색으로 변경 */
+            white-space: nowrap; /* 글자 줄 바꿈 방지 */
+            overflow: hidden; /* 넘치는 내용 숨기기 */
+            text-overflow: ellipsis; /* 넘치는 내용 말줄임표 처리 */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 로고 및 텍스트 블록 -->
+        <div class="logo-text-block">
+            <!-- 부산남중학교 로고 이미지 (실제 이미지 경로로 대체 필요) -->
+            <img src="/image/simbol.png" alt="MateTalk 로고" class="logo-image mx-auto">
+            <h1 class="main-title">MateTalk</h1>
+            <p class="subtitle">설치 없이 웹에서 바로 완전 무료 메신저</p>
+        </div>
+
+        <!-- 로그인 버튼 블록 -->
+        <div class="login-button-block">
+            <!-- 로그인 버튼에 ID 추가 (Add ID to login button) -->
+            <button id="loginButton" class="login-button">로그인</button>
+        </div>
+    </div>
+
+    <script>
+        // DOMContentLoaded 이벤트 리스너를 사용하여 문서가 완전히 로드된 후 스크립트를 실행합니다.
+        // (Use DOMContentLoaded event listener to run the script after the document is fully loaded.)
+        document.addEventListener('DOMContentLoaded', () => {
+            // ID를 사용하여 로그인 버튼 요소를 가져옵니다.
+            // (Get the login button element using its ID.)
+            const loginButton = document.getElementById('loginButton');
+
+            // 로그인 버튼이 존재하면 클릭 이벤트 리스너를 추가합니다.
+            // (If the login button exists, add a click event listener.)
+            if (loginButton) {
+                loginButton.addEventListener('click', () => {
+                    // 현재 탭에서 '/auth' 경로로 이동합니다.
+                    // (Navigate to the '/auth' path in the current tab.)
+                    window.location.href = '/auth';
+                });
+            } else {
+                console.error('로그인 버튼을 찾을 수 없습니다. (Login button not found.)');
+            }
+        });
+    </script>
+</body>
+</html>
