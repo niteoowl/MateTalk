@@ -364,32 +364,32 @@
     </style>
 </head>
 <body>
-    <!-- 오버레이 (친구 추가 패널 뒤 배경을 어둡게 함) -->
+    <!-- Overlay (dims background behind friend add panel) -->
     <div id="friendAddOverlay" class="overlay"></div>
 
     <div class="main-app-container bg-white">
-        <!-- 헤더 -->
+        <!-- Header -->
         <header class="app-header">
             <h1 class="header-title">MATES</h1>
             <div class="flex items-center space-x-4">
-                <!-- 검색 아이콘 -->
+                <!-- Search Icon -->
                 <svg class="header-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                 </svg>
-                <!-- 친구 추가 (+) 아이콘 -->
+                <!-- Add Friend (+) Icon -->
                 <svg id="addFriendIcon" class="header-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                 </svg>
             </div>
         </header>
 
-        <!-- 채팅 목록 (MATES 페이지의 실제 콘텐츠가 여기에 들어갈 수 있습니다) -->
+        <!-- Chat List (Actual content for MATES page can go here) -->
         <main class="chat-list-container">
-            <!-- 프로필 섹션 (이제 스크롤 가능 영역 안에 위치) -->
+            <!-- Profile Section (now inside scrollable area) -->
             <div class="profile-section">
                 <div class="profile-avatar" id="myProfileAvatar">
-                    <!-- 프로필 이미지 또는 이니셜 -->
-                    <img id="myProfileImage" src="https://placehold.co/60x60/CCCCCC/FFFFFF?text=나" alt="내 프로필 이미지" class="hidden">
+                    <!-- Profile image or initials -->
+                    <img id="myProfileImage" src="https://placehold.co/60x60/CCCCCC/FFFFFF?text=나" alt="My Profile Image" class="hidden">
                     <span id="myProfileInitials">나</span>
                 </div>
                 <div class="profile-info">
@@ -398,23 +398,23 @@
                 </div>
             </div>
 
-            <!-- 친구 목록이 동적으로 여기에 삽입됩니다 -->
+            <!-- Friends list will be dynamically inserted here -->
             <div id="friendsListContainer">
-                <!-- 예시 친구/MATES 아이템 (동적으로 생성될 예정) -->
+                <!-- Example friend/MATES item (will be dynamically generated) -->
             </div>
 
         </main>
 
-        <!-- 하단 내비게이션 바 -->
+        <!-- Bottom Navigation Bar -->
         <nav class="bottom-nav">
-            <!-- MATES 탭 (활성화) -->
+            <!-- MATES Tab (Active) -->
             <div class="nav-item active">
                 <svg class="nav-icon" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.972 5.972 0 004 15v3H1v-3a3 3 0 013.75-2.906z"></path>
+                    <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3 0 0119 15v3h-3zM4.75 12.094A5.972 5.972 0 004 15v3H1v-3a3 3 0 013.75-2.906z"></path>
                 </svg>
                 <span class="nav-text">MATES</span>
             </div>
-            <!-- 채팅 탭 -->
+            <!-- Chat Tab -->
             <div class="nav-item">
                 <svg class="nav-icon" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                     <path d="M2 5a2 2 0 012-2h7a2 2 0 012 2v4a2 2 0 01-2 2H9l-3 3v-3H4a2 2 0 01-2-2V5z"></path>
@@ -422,14 +422,14 @@
                 </svg>
                 <span class="nav-text">채팅</span>
             </div>
-            <!-- LIVE 탭 -->
+            <!-- LIVE Tab -->
             <div class="nav-item">
                 <svg class="nav-icon" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path>
                 </svg>
                 <span class="nav-text">LIVE</span>
             </div>
-            <!-- 더보기 탭 -->
+            <!-- More Tab -->
             <div class="nav-item">
                 <svg class="nav-icon" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                     <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z"></path>
@@ -438,7 +438,7 @@
             </div>
         </nav>
 
-        <!-- 친구 추가 패널 -->
+        <!-- Friend Add Panel -->
         <div id="friendAddPanel" class="friend-add-panel">
             <div class="friend-add-header">
                 <h2 class="text-lg font-semibold text-gray-800">친구 추가</h2>
@@ -455,18 +455,18 @@
         </div>
     </div>
 
-    <!-- 메시지 박스 -->
+    <!-- Message Box -->
     <div id="messageBox" class="message-box"></div>
 
     <script type="module">
-        // Firebase SDK 가져오기
-        // Firebase SDK v8에서는 initializeApp, getAuth, onAuthStateChanged, getFirestore 등이 직접 export되지 않습니다.
-        // 대신 firebase 전역 객체를 통해 접근합니다.
+        // Import Firebase SDK
+        // In Firebase SDK v8, initializeApp, getAuth, onAuthStateChanged, getFirestore, etc., are not directly exported.
+        // Instead, they are accessed via the global firebase object.
         import "https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js";
         import "https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js";
         import "https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js";
 
-        // Canvas 환경에서 제공되는 전역 변수
+        // Global variables provided by Canvas environment
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
         const firebaseConfig = {
             apiKey: "AIzaSyALUv0zMoBExmhZJd2idSfmB_-DbPAAdL8",
@@ -478,31 +478,31 @@
             measurementId: "G-WQH66CMVP1"
         };
 
-        // Firebase app 및 auth, firestore 인스턴스 (let으로 선언하여 재할당 가능하게 함)
+        // Firebase app, auth, and firestore instances (declared with let for re-assignment)
         let app;
         let auth;
         let db;
 
-        // DOMContentLoaded 이벤트 리스너 내부에서 Firebase 초기화 및 인스턴스 할당
+        // Initialize Firebase and assign instances inside DOMContentLoaded event listener
         document.addEventListener('DOMContentLoaded', async () => {
-            console.log('DOMContentLoaded 이벤트 발생. 앱 초기화 시작.');
+            console.log('DOMContentLoaded event fired. Starting app initialization.');
 
-            // Firebase 초기화
+            // Firebase initialization
             if (firebaseConfig && firebaseConfig.apiKey && firebase.apps.length === 0) {
                 try {
                     app = firebase.initializeApp(firebaseConfig);
                     auth = firebase.auth();
                     db = firebase.firestore();
-                    console.log('Firebase 앱 및 Firestore 초기화 성공.');
+                    console.log('Firebase app and Firestore initialized successfully.');
 
-                    // onAuthStateChanged는 로그인 상태 변화를 감지하므로 여기서 초기 UI 결정을 함.
+                    // onAuthStateChanged detects login state changes, so initial UI decisions are made here.
                     auth.onAuthStateChanged(async (user) => {
                         if (user) {
-                            currentUserId = user.uid; // currentUserId를 여기서 설정
-                            console.log('onAuthStateChanged: 사용자 로그인됨 (UID):', user.uid);
-                            const profile = await getPrivateUserProfile(user.uid); // 현재 사용자는 개인 프로필 가져오기
+                            currentUserId = user.uid; // Set currentUserId here
+                            console.log('onAuthStateChanged: User logged in (UID):', user.uid);
+                            const profile = await getPrivateUserProfile(user.uid); // Get private profile for current user
                             if (profile && profile.generatedId && profile.name && profile.statusMessage) {
-                                // 프로필 정보 업데이트
+                                // Update profile information
                                 myProfileName.textContent = profile.name;
                                 myProfileStatus.textContent = profile.statusMessage;
                                 if (profile.profileImageBase64) {
@@ -514,36 +514,36 @@
                                     myProfileImage.classList.add('hidden');
                                     myProfileInitials.classList.remove('hidden');
                                 }
-                                // 친구 목록 로드 및 실시간 업데이트 시작
-                                renderFriendsList(user.uid); // user.uid를 사용하여 친구 목록 로드
+                                // Start loading and real-time updating of friend list
+                                renderFriendsList(user.uid); // Load friend list using user.uid
                             } else {
-                                console.log('프로필이 불완전합니다. 로그인 페이지로 리디렉션합니다.');
-                                window.location.href = "/login"; // 프로필 설정이 필요하면 로그인 페이지로 리디렉션
+                                console.log('Profile is incomplete. Redirecting to login page.');
+                                window.location.href = "/login"; // Redirect to login page if profile setup is needed
                             }
                         } else {
-                            currentUserId = null; // 로그아웃 시 currentUserId 초기화
-                            console.log('onAuthStateChanged: 사용자 로그아웃됨. 로그인 페이지로 리디렉션합니다.');
-                            window.location.href = "/login"; // 로그인되지 않았으면 로그인 페이지로 리디렉션
+                            currentUserId = null; // Clear currentUserId on logout
+                            console.log('onAuthStateChanged: User logged out. Redirecting to login page.');
+                            window.location.href = "/login"; // Redirect to login page if not logged in
                         }
                     });
 
                 } catch (error) {
-                    console.error('Firebase 앱 초기화 실패:', error);
+                    console.error('Firebase app initialization failed:', error);
                 }
             } else if (firebase.apps.length > 0) {
                 app = firebase.app();
                 auth = firebase.auth();
-                db = firebase.firestore(); // 기존 앱 인스턴스에서 Firestore 가져오기
-                console.log('Firebase 앱이 이미 초기화되어 있습니다. 기존 인스턴스 사용.');
+                db = firebase.firestore(); // Get Firestore from existing app instance
+                console.log('Firebase app is already initialized. Using existing instance.');
 
-                // onAuthStateChanged는 로그인 상태 변화를 감지하므로 여기서 초기 UI 결정을 함.
+                // onAuthStateChanged detects login state changes, so initial UI decisions are made here.
                 auth.onAuthStateChanged(async (user) => {
                     if (user) {
-                        currentUserId = user.uid; // currentUserId를 여기서 설정
-                        console.log('onAuthStateChanged: 사용자 로그인됨 (UID):', user.uid);
-                        const profile = await getPrivateUserProfile(user.uid); // 현재 사용자는 개인 프로필 가져오기
+                        currentUserId = user.uid; // Set currentUserId here
+                        console.log('onAuthStateChanged: User logged in (UID):', user.uid);
+                        const profile = await getPrivateUserProfile(user.uid); // Get private profile for current user
                         if (profile && profile.generatedId && profile.name && profile.statusMessage) {
-                            // 프로필 정보 업데이트
+                            // Update profile information
                             myProfileName.textContent = profile.name;
                             myProfileStatus.textContent = profile.statusMessage;
                             if (profile.profileImageBase64) {
@@ -555,26 +555,26 @@
                                 myProfileImage.classList.add('hidden');
                                 myProfileInitials.classList.remove('hidden');
                             }
-                            // 친구 목록 로드 및 실시간 업데이트 시작
-                            renderFriendsList(user.uid); // user.uid를 사용하여 친구 목록 로드
+                            // Start loading and real-time updating of friend list
+                            renderFriendsList(user.uid); // Load friend list using user.uid
                         } else {
-                            console.log('프로필이 불완전합니다. 로그인 페이지로 리디렉션합니다.');
-                            window.location.href = "/login"; // 프로필 설정이 필요하면 로그인 페이지로 리디렉션
+                            console.log('Profile is incomplete. Redirecting to login page.');
+                            window.location.href = "/login"; // Redirect to login page if profile setup is needed
                         }
                     } else {
-                        currentUserId = null; // 로그아웃 시 currentUserId 초기화
-                        console.log('onAuthStateChanged: 사용자 로그아웃됨. 로그인 페이지로 리디렉션합니다.');
-                        window.location.href = "/login"; // 로그인되지 않았으면 로그인 페이지로 리디렉션
+                        currentUserId = null; // Clear currentUserId on logout
+                        console.log('onAuthStateChanged: User logged out. Redirecting to login page.');
+                        window.location.href = "/login"; // Redirect to login page if not logged in
                     }
                 });
 
             } else {
-                console.warn('Firebase 설정이 올바르게 제공되지 않았습니다. 로그인 기능이 작동하지 않을 수 있습니다. firebaseConfig 변수를 확인하세요.');
+                console.warn('Firebase configuration not provided correctly. Login functionality may not work. Check firebaseConfig variable.');
             }
         });
 
 
-        // DOM 요소 가져오기 (DOMContentLoaded 외부에서 선언)
+        // Get DOM elements (declared outside DOMContentLoaded)
         const myProfileAvatar = document.getElementById('myProfileAvatar');
         const myProfileImage = document.getElementById('myProfileImage');
         const myProfileInitials = document.getElementById('myProfileInitials');
@@ -587,15 +587,15 @@
         const friendAddOverlay = document.getElementById('friendAddOverlay');
         const friendIdInput = document.getElementById('friendIdInput');
         const addFriendButton = document.getElementById('addFriendButton');
-        const messageBox = document.getElementById('messageBox'); // 메시지 박스 요소
+        const messageBox = document.getElementById('messageBox'); // Message box element
 
-        let currentUserId = null; // 현재 로그인된 사용자 ID
+        let currentUserId = null; // Current logged-in user ID
 
 
-        // 메시지를 표시하는 유틸리티 함수
+        // Utility function to display messages
         function showMessage(message, isError = false) {
             messageBox.textContent = message;
-            messageBox.classList.remove('error', 'show'); // 기존 클래스 제거
+            messageBox.classList.remove('error', 'show'); // Remove existing classes
             if (isError) {
                 messageBox.classList.add('error');
             }
@@ -603,35 +603,35 @@
 
             setTimeout(() => {
                 messageBox.classList.remove('show');
-            }, 3000); // 3초 후 메시지 숨김
+            }, 3000); // Hide message after 3 seconds
         }
 
-        // 사용자 개인 프로필을 Firestore에서 가져오는 함수
+        // Function to get user's private profile from Firestore
         async function getPrivateUserProfile(userId) {
             if (!db) {
-                console.error('Firestore 인스턴스가 초기화되지 않았습니다.');
+                console.error('Firestore instance not initialized.');
                 return null;
             }
             const userProfileRef = db.collection('artifacts').doc(appId).collection('users').doc(userId).collection('profile').doc('user_data');
             try {
                 const userDoc = await userProfileRef.get();
                 if (userDoc.exists) {
-                    console.log('사용자 개인 프로필 데이터:', userDoc.data());
+                    console.log('User private profile data:', userDoc.data());
                     return userDoc.data();
                 } else {
-                    console.log(`사용자 개인 프로필을 찾을 수 없습니다: ${userId}`);
+                    console.log(`User private profile not found: ${userId}`);
                     return null;
                 }
             } catch (error) {
-                console.error(`사용자 개인 프로필을 가져오는 중 오류 발생 (${userId}):`, error);
+                console.error(`Error getting user private profile (${userId}):`, error);
                 return null;
             }
         }
 
-        // 사용자 공개 프로필을 Firestore에서 가져오는 함수
+        // Function to get user's public profile from Firestore
         async function getPublicUserProfile(userId) {
             if (!db) {
-                console.error('Firestore 인스턴스가 초기화되지 않았습니다.');
+                console.error('Firestore instance not initialized for public profile.');
                 return null;
             }
             // Fetch from public profile data
@@ -640,45 +640,57 @@
             try {
                 const userDoc = await publicUserProfileRef.get();
                 if (userDoc.exists) {
-                    console.log('사용자 공개 프로필 데이터:', userDoc.data());
+                    console.log(`Successfully fetched public profile for ${userId}:`, userDoc.data());
                     return userDoc.data();
                 } else {
-                    console.log(`사용자 공개 프로필을 찾을 수 없습니다: ${userId}`);
+                    console.log(`Public profile not found for userId: ${userId}`);
                     return null;
                 }
             } catch (error) {
-                console.error(`사용자 공개 프로필을 가져오는 중 오류 발생 (${userId}):`, error);
+                console.error(`Error fetching public profile for userId ${userId}:`, error);
                 return null;
             }
         }
 
 
-        // 친구 목록을 가져와 렌더링하는 함수
+        // Function to fetch and render the friend list
         async function renderFriendsList(userId) {
-            if (!db || !userId) return;
+            if (!db || !userId) {
+                console.log('renderFriendsList: DB or userId not available.');
+                return;
+            }
 
-            friendsListContainer.innerHTML = ''; // 기존 목록 초기화
-            // Firestore SDK v8 방식: db 인스턴스를 통해 컬렉션 참조
+            friendsListContainer.innerHTML = ''; // Clear existing list
+            // Firestore SDK v8 method: collection reference via db instance
             const friendsCollectionRef = db.collection('artifacts').doc(appId).collection('users').doc(userId).collection('friends');
 
-            // 실시간 업데이트를 위해 onSnapshot 사용
-            // onSnapshot은 firebase.firestore.CollectionReference 또는 DocumentReference의 메서드입니다.
+            // Use onSnapshot for real-time updates
+            // onSnapshot is a method of firebase.firestore.CollectionReference or DocumentReference.
             friendsCollectionRef.onSnapshot(async (snapshot) => {
-                friendsListContainer.innerHTML = ''; // 변경 시 목록 초기화
+                console.log('onSnapshot triggered for friends list. Snapshot size:', snapshot.docs.length);
+                friendsListContainer.innerHTML = ''; // Clear list on change
                 const friendPromises = snapshot.docs.map(async (friendDoc) => {
                     const friendData = friendDoc.data();
-                    const friendId = friendData.friendUserId; // 친구의 실제 UID
+                    const friendId = friendData.friendUserId; // Actual UID of the friend
+
+                    console.log('Processing friendDoc:', friendDoc.id, 'friendUserId:', friendId);
 
                     if (friendId) {
-                        const friendProfile = await getPublicUserProfile(friendId); // 친구 프로필은 공개 프로필에서 가져옴
+                        const friendProfile = await getPublicUserProfile(friendId); // Get friend profile from public profiles
                         if (friendProfile) {
+                            console.log(`Found public profile for friendId ${friendId}:`, friendProfile);
                             return { id: friendId, ...friendProfile };
+                        } else {
+                            console.warn(`Public profile not found for friendId: ${friendId}. Skipping this friend.`);
                         }
+                    } else {
+                        console.warn('friendUserId is missing in friend document:', friendDoc.id);
                     }
                     return null;
                 });
 
                 const friends = (await Promise.all(friendPromises)).filter(f => f !== null);
+                console.log('Filtered friends to render:', friends);
 
                 if (friends.length === 0) {
                     friendsListContainer.innerHTML = `
@@ -705,26 +717,26 @@
                     friendsListContainer.appendChild(chatItem);
                 });
             }, (error) => {
-                console.error("친구 목록 실시간 업데이트 오류:", error);
+                console.error("Real-time update error for friends list:", error);
                 showMessage('친구 목록을 불러오는 데 실패했습니다.', true);
             });
         }
 
 
-        // 친구 추가 패널을 표시하는 함수
+        // Function to show the friend add panel
         function showFriendAddPanel() {
             friendAddOverlay.classList.add('is-visible');
             friendAddPanel.classList.add('is-visible');
         }
 
-        // 친구 추가 패널을 숨기는 함수
+        // Function to hide the friend add panel
         function hideFriendAddPanel() {
             friendAddOverlay.classList.remove('is-visible');
             friendAddPanel.classList.remove('is-visible');
-            friendIdInput.value = ''; // 입력 필드 초기화
+            friendIdInput.value = ''; // Clear input field
         }
 
-        // 친구 추가 로직
+        // Friend add logic
         async function addFriend() {
             if (!currentUserId) {
                 showMessage('로그인 후 친구를 추가할 수 있습니다.', true);
@@ -737,16 +749,16 @@
                 return;
             }
 
-            // 현재 로그인된 사용자의 프로필 정보를 가져와서 자신의 ID와 비교
-            const myProfile = await getPrivateUserProfile(currentUserId); // 자신의 프로필은 개인 프로필에서 가져옴
+            // Get current logged-in user's profile information to compare with their own ID
+            const myProfile = await getPrivateUserProfile(currentUserId); // Get own profile from private profile
             if (myProfile && friendGeneratedId === myProfile.generatedId) {
                  showMessage('자신을 친구로 추가할 수 없습니다.', true);
                  return;
             }
 
 
-            // 1. public/user_ids 컬렉션에서 friendGeneratedId에 해당하는 userId 찾기
-            // Firestore SDK v8 방식: db 인스턴스를 통해 컬렉션 및 문서 참조
+            // 1. Find userId corresponding to friendGeneratedId in public/user_ids collection
+            // Firestore SDK v8 method: collection and document reference via db instance
             const publicUserIdsCollectionPath = `artifacts/${appId}/public/data/user_ids`;
             const publicUserIdRef = db.collection(publicUserIdsCollectionPath).doc(friendGeneratedId);
             let friendUserId = null;
@@ -759,7 +771,7 @@
                     return;
                 }
             } catch (error) {
-                console.error("공개 ID 조회 오류:", error);
+                console.error("Error looking up public ID:", error);
                 showMessage('친구 ID를 확인하는 중 오류가 발생했습니다.', true);
                 return;
             }
@@ -769,10 +781,10 @@
                 return;
             }
 
-            // 2. 이미 친구인지 확인
-            // Firestore SDK v8 방식: db 인스턴스를 통해 컬렉션 참조
+            // 2. Check if already friends
+            // Firestore SDK v8 method: collection reference via db instance
             const currentUserFriendsRef = db.collection('artifacts').doc(appId).collection('users').doc(currentUserId).collection('friends');
-            const friendDocRef = currentUserFriendsRef.doc(friendUserId); // 친구의 UID를 문서 ID로 사용
+            const friendDocRef = currentUserFriendsRef.doc(friendUserId); // Use friend's UID as document ID
 
             try {
                 const existingFriendDoc = await friendDocRef.get();
@@ -781,29 +793,29 @@
                     return;
                 }
             } catch (error) {
-                console.error("친구 중복 확인 오류:", error);
+                console.error("Error checking for duplicate friend:", error);
                 showMessage('친구 상태를 확인하는 중 오류가 발생했습니다.', true);
                 return;
             }
 
-            // 3. 친구 추가 (현재 사용자의 friends 컬렉션에 추가)
+            // 3. Add friend (add to current user's friends collection)
             try {
-                // setDoc 대신 doc.set() 메서드 사용
+                // Use doc.set() method instead of setDoc
                 await friendDocRef.set({
                     friendUserId: friendUserId,
                     addedAt: firebase.firestore.FieldValue.serverTimestamp()
                 });
                 showMessage(`${friendGeneratedId}님을 친구로 추가했습니다.`, false);
                 hideFriendAddPanel();
-                // 친구 목록은 onSnapshot에 의해 자동으로 업데이트됩니다.
+                // Friend list will be automatically updated by onSnapshot.
             } catch (error) {
-                console.error("친구 추가 오류:", error);
+                console.error("Error adding friend:", error);
                 showMessage('친구 추가에 실패했습니다. 다시 시도해주세요.', true);
             }
         }
 
 
-        // 이벤트 리스너
+        // Event Listeners
         if (addFriendIcon) {
             addFriendIcon.addEventListener('click', showFriendAddPanel);
         }
@@ -813,7 +825,7 @@
         }
 
         if (friendAddOverlay) {
-            friendAddOverlay.addEventListener('click', hideFriendAddPanel); // 오버레이 클릭 시 닫기
+            friendAddOverlay.addEventListener('click', hideFriendAddPanel); // Close on overlay click
         }
 
         if (addFriendButton) {
