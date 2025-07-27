@@ -96,6 +96,25 @@
             -webkit-mask-image: none;
         }
 
+        /* 프로필 배경 이미지 (가상 요소 사용) */
+        .profile-info-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 200px; /* 배경 이미지 높이 */
+            background: linear-gradient(to bottom, #a7d9ed, #e0f2f7) no-repeat center center; /* 기본 배경 그라데이션 */
+            background-size: cover;
+            z-index: 1; /* 프로필 내용 아래에 위치 */
+            filter: brightness(0.8); /* 배경 이미지를 약간 어둡게 */
+        }
+
+        /* 프로필 배경 이미지가 로드될 때 적용되는 클래스 */
+        .profile-info-section.has-bg-image::before {
+            background-image: var(--profile-background-image, none); /* JS에서 설정할 변수 사용 */
+        }
+
         .profile-avatar-large {
             width: 150px; /* 큰 아바타 크기 */
             height: 150px; /* 큰 아바타 크기 */
@@ -111,6 +130,7 @@
             margin-bottom: 16px; /* 아바타와 이름 사이 간격 */
             border: 3px solid #ffffff; /* 흰색 테두리 추가 */
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* 더 뚜렷한 그림자 */
+            z-index: 5; /* 배경 이미지 위에 표시 */
         }
 
         .profile-avatar-large img {
@@ -125,6 +145,7 @@
             color: #1f2937; /* 어두운 글자색 */
             margin-bottom: 8px;
             text-shadow: 0 1px 2px rgba(0,0,0,0.1); /* 텍스트 그림자 추가 */
+            z-index: 5;
         }
 
         .profile-status-large {
@@ -135,6 +156,7 @@
             word-wrap: break-word;
             line-height: 1.4;
             text-shadow: 0 1px 1px rgba(0,0,0,0.05); /* 텍스트 그림자 추가 */
+            z-index: 5;
         }
 
         /* 액션 버튼 섹션 (하단 고정) */
@@ -211,7 +233,8 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.2);
             z-index: 100;
             opacity: 0;
-            transition: opacity 0.3s ease-in-out;
+            visibility: hidden; /* 초기에는 숨김 */
+            transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
         }
 
         .message-box.error {
@@ -220,6 +243,7 @@
 
         .message-box.show {
             opacity: 1;
+            visibility: visible; /* 표시될 때 보임 */
         }
 
         /* 모달 스타일 */
@@ -292,6 +316,43 @@
         .modal-button.cancel:hover {
             background-color: #c0c0c0;
         }
+
+        /* 스켈레톤 로딩 스타일 */
+        .skeleton-loader {
+            background-color: #e2e8f0; /* Light gray for skeleton */
+            border-radius: 4px;
+            animation: pulse 1.5s infinite ease-in-out; /* Pulsing animation */
+        }
+
+        .skeleton-avatar {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            margin-bottom: 16px;
+        }
+
+        .skeleton-name {
+            width: 70%;
+            height: 36px;
+            margin-bottom: 8px;
+        }
+
+        .skeleton-status {
+            width: 90%;
+            height: 24px;
+            margin-bottom: 16px;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.6; }
+            50% { opacity: 1; }
+            100% { opacity: 0.6; }
+        }
+
+        /* 숨김 클래스 */
+        .hidden {
+            display: none !important;
+        }
     </style>
 </head>
 <body>
@@ -300,23 +361,25 @@
         <header class="app-header">
             <!-- Close Button -->
             <svg id="closeButton" class="header-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-            <!-- Right Icons (삭제됨) -->
-            <div class="flex space-x-4">
-                <!-- 다운로드 아이콘 삭제 -->
-                <!-- 설정 아이콘 삭제 -->
-            </div>
+            <!-- Edit Icon (내 프로필일 경우에만 표시) -->
+            <svg id="editProfileIcon" class="header-icon hidden" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pencil"><path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="M15 5l4 4"/></svg>
         </header>
 
         <!-- 프로필 정보 섹션 -->
-        <main class="profile-info-section">
-            <div class="profile-avatar-large">
+        <main id="profileInfoSection" class="profile-info-section">
+            <div id="profileAvatarContainer" class="profile-avatar-large">
                 <!-- 실제 친구 프로필 이미지 또는 이니셜로 대체될 부분 -->
                 <img id="friendProfileImage" src="https://placehold.co/150x150/A78BFA/FFFFFF?text=친구" alt="친구 프로필 이미지">
+                <!-- 스켈레톤 로더 -->
+                <div id="skeletonAvatar" class="skeleton-avatar absolute top-0 left-0"></div>
             </div>
             <div id="friendProfileName" class="profile-name-large">친구 이름</div>
+            <div id="skeletonName" class="skeleton-name absolute"></div>
+
             <div id="friendProfileStatus" class="profile-status-large">
                 이것은 친구의 상태 메시지입니다. 기분이나 현재 상태를 나타냅니다.
             </div>
+            <div id="skeletonStatus" class="skeleton-status absolute"></div>
         </main>
 
         <!-- 액션 버튼 섹션 (하단 고정) -->
@@ -350,6 +413,46 @@
         </div>
     </div>
 
+    <!-- Edit Profile Modal -->
+    <div id="editProfileModal" class="modal-overlay">
+        <div class="modal-content w-11/12 max-w-md p-6">
+            <h2 class="text-xl font-semibold mb-4 text-gray-800">프로필 편집</h2>
+
+            <!-- 프로필 이미지 편집 -->
+            <div class="flex flex-col items-center mb-4">
+                <input type="file" id="editProfileImageInput" accept="image/*" class="hidden">
+                <label for="editProfileImageInput" class="w-24 h-24 rounded-full bg-gray-200 flex items-center justify-center cursor-pointer overflow-hidden border-2 border-gray-300 shadow-sm">
+                    <img id="editProfileImagePreview" src="https://placehold.co/96x96/CCCCCC/FFFFFF?text=Upload" alt="Profile Preview" class="w-full h-full object-cover">
+                </label>
+                <span class="text-sm text-gray-500 mt-2">프로필 사진 변경</span>
+            </div>
+
+            <!-- 배경 이미지 편집 -->
+            <div class="flex flex-col items-center mb-6">
+                <input type="file" id="editBackgroundImageInput" accept="image/*" class="hidden">
+                <label for="editBackgroundImageInput" class="w-full h-24 bg-gray-200 flex items-center justify-center cursor-pointer overflow-hidden rounded-lg border-2 border-gray-300 shadow-sm">
+                    <img id="editBackgroundImagePreview" src="https://placehold.co/400x96/E0F2F7/6B7280?text=Background" alt="Background Preview" class="w-full h-full object-cover">
+                </label>
+                <span class="text-sm text-gray-500 mt-2">배경 사진 변경</span>
+            </div>
+
+            <!-- 이름 입력 -->
+            <div class="mb-4">
+                <input type="text" id="editProfileNameInput" placeholder="이름" class="w-full p-2 border border-gray-300 rounded-md">
+            </div>
+
+            <!-- 상태 메시지 입력 -->
+            <div class="mb-6">
+                <textarea id="editProfileStatusInput" placeholder="상태 메시지" class="w-full p-2 border border-gray-300 rounded-md h-20 resize-none"></textarea>
+            </div>
+
+            <div class="modal-buttons">
+                <button id="saveProfileChangesButton" class="modal-button confirm bg-blue-500 hover:bg-blue-600 text-white">저장</button>
+                <button id="cancelEditProfileButton" class="modal-button cancel">취소</button>
+            </div>
+        </div>
+    </div>
+
     <script type="module">
         // Firebase SDK 가져오기
         import "https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js";
@@ -376,6 +479,7 @@
         let friendUid = null; // 현재 프로필 페이지에 표시될 친구의 UID
 
         // DOM 요소 가져오기
+        const profileInfoSection = document.getElementById('profileInfoSection'); // 프로필 정보 섹션 (배경 이미지 적용을 위해)
         const friendProfileImage = document.getElementById('friendProfileImage');
         const friendProfileName = document.getElementById('friendProfileName');
         const friendProfileStatus = document.getElementById('friendProfileStatus');
@@ -384,12 +488,32 @@
         const deleteFriendButton = document.getElementById('deleteFriendButton');
         const closeButton = document.getElementById('closeButton');
         const messageBox = document.getElementById('messageBox');
+        const editProfileIcon = document.getElementById('editProfileIcon'); // 편집 아이콘
+
+        // 스켈레톤 로더 요소
+        const skeletonAvatar = document.getElementById('skeletonAvatar');
+        const skeletonName = document.getElementById('skeletonName');
+        const skeletonStatus = document.getElementById('skeletonStatus');
 
         // 모달 관련 DOM 요소
         const confirmationModal = document.getElementById('confirmationModal');
         const modalMessage = document.getElementById('modalMessage');
         const modalConfirmButton = document.getElementById('modalConfirmButton');
         const modalCancelButton = document.getElementById('modalCancelButton');
+
+        // 프로필 편집 모달 관련 DOM 요소
+        const editProfileModal = document.getElementById('editProfileModal');
+        const editProfileImageInput = document.getElementById('editProfileImageInput');
+        const editProfileImagePreview = document.getElementById('editProfileImagePreview');
+        const editBackgroundImageInput = document.getElementById('editBackgroundImageInput');
+        const editBackgroundImagePreview = document.getElementById('editBackgroundImagePreview');
+        const editProfileNameInput = document.getElementById('editProfileNameInput');
+        const editProfileStatusInput = document.getElementById('editProfileStatusInput');
+        const saveProfileChangesButton = document.getElementById('saveProfileChangesButton');
+        const cancelEditProfileButton = document.getElementById('cancelEditProfileButton');
+
+        let currentProfileData = {}; // 현재 로드된 프로필 데이터를 저장할 객체 (편집 시 사용)
+
 
         // 메시지를 표시하는 유틸리티 함수
         function showMessage(message, isError = false) {
@@ -446,6 +570,28 @@
                 }
             } catch (error) {
                 console.error(`UID ${userId}에 대한 공개 프로필 가져오기 오류:`, error);
+                return null;
+            }
+        }
+
+        // Firestore에서 사용자 개인 프로필을 가져오는 함수 (편집 모달용)
+        async function getPrivateUserProfile(userId) {
+            if (!db) {
+                console.error('Firestore 인스턴스가 초기화되지 않았습니다.');
+                return null;
+            }
+            const privateUserProfileRef = db.collection('artifacts').doc(appId).collection('users').doc(userId).collection('profile').doc('user_data');
+            try {
+                const userDoc = await privateUserProfileRef.get();
+                if (userDoc.exists) {
+                    console.log(`UID ${userId}에 대한 개인 프로필 가져오기 성공:`, userDoc.data());
+                    return userDoc.data();
+                } else {
+                    console.error(`UID: ${userId}에 대한 개인 프로필 문서를 찾을 수 없습니다.`);
+                    return null;
+                }
+            } catch (error) {
+                console.error(`UID ${userId}에 대한 개인 프로필 가져오기 오류:`, error);
                 return null;
             }
         }
@@ -523,9 +669,28 @@
             });
         }
 
+        // 스켈레톤 로더 표시/숨김 함수
+        function showSkeleton() {
+            friendProfileImage.classList.add('hidden');
+            friendProfileName.classList.add('hidden');
+            friendProfileStatus.classList.add('hidden');
+            skeletonAvatar.classList.remove('hidden');
+            skeletonName.classList.remove('hidden');
+            skeletonStatus.classList.remove('hidden');
+        }
+
+        function hideSkeleton() {
+            friendProfileImage.classList.remove('hidden');
+            friendProfileName.classList.remove('hidden');
+            friendProfileStatus.classList.remove('hidden');
+            skeletonAvatar.classList.add('hidden');
+            skeletonName.classList.add('hidden');
+            skeletonStatus.classList.add('hidden');
+        }
 
         // 프로필 데이터를 로드하고 UI를 업데이트하는 함수
         async function loadFriendProfile(uid) {
+            showSkeleton(); // 데이터 로드 시작 시 스켈레톤 표시
             const profile = await getPublicUserProfile(uid);
             if (profile) {
                 friendProfileName.textContent = profile.name || '알 수 없는 친구';
@@ -533,8 +698,16 @@
                 if (profile.profileImageBase64) {
                     friendProfileImage.src = profile.profileImageBase64;
                 } else {
-                    // 기본 이미지 또는 이니셜 (여기서는 플레이스홀더 유지)
                     friendProfileImage.src = `https://placehold.co/150x150/A78BFA/FFFFFF?text=${(profile.name || '친구').charAt(0)}`;
+                }
+
+                // 배경 이미지 설정
+                if (profile.backgroundImageBase64) {
+                    profileInfoSection.style.setProperty('--profile-background-image', `url('${profile.backgroundImageBase64}')`);
+                    profileInfoSection.classList.add('has-bg-image');
+                } else {
+                    profileInfoSection.style.removeProperty('--profile-background-image');
+                    profileInfoSection.classList.remove('has-bg-image');
                 }
 
                 // 즐겨찾기 상태 업데이트
@@ -545,16 +718,175 @@
                             <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-star"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
                             <span>즐겨찾기</span>
                         `;
+                    } else {
+                         favoriteButton.innerHTML = `
+                            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-star"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                            <span>즐겨찾기</span>
+                        `;
                     }
                 }
 
+                // 내 프로필일 경우 편집 아이콘 표시 및 친구 삭제 버튼 숨기기
+                if (uid === currentUserId) {
+                    editProfileIcon.classList.remove('hidden');
+                    deleteFriendButton.classList.add('hidden'); // 내 프로필에서는 친구 삭제 버튼 숨김
+                } else {
+                    editProfileIcon.classList.add('hidden');
+                    deleteFriendButton.classList.remove('hidden'); // 친구 프로필에서는 친구 삭제 버튼 표시
+                }
+
+                hideSkeleton(); // 데이터 로드 완료 시 스켈레톤 숨김
             } else {
                 showMessage('친구 프로필을 불러올 수 없습니다.', true);
                 friendProfileName.textContent = '프로필 없음';
                 friendProfileStatus.textContent = '친구 정보를 찾을 수 없습니다.';
                 friendProfileImage.src = 'https://placehold.co/150x150/CCCCCC/FFFFFF?text=Error';
+                hideSkeleton(); // 오류 발생 시에도 스켈레톤 숨김
             }
         }
+
+        // 사용자 정보를 Firestore에 저장하는 함수 (배경 이미지 필드 추가)
+        async function saveUserProfile(userId, profileImageBase64, name, statusMessage, generatedId, backgroundImageBase64) {
+            if (!db) {
+                console.error('Firestore 인스턴스가 초기화되지 않았습니다.');
+                return false;
+            }
+            try {
+                // 1. 개인 프로필 저장 (private)
+                const privateUserProfileRef = db.collection('artifacts').doc(appId).collection('users').doc(userId).collection('profile').doc('user_data');
+                await privateUserProfileRef.set({
+                    profileImageBase64: profileImageBase64,
+                    name: name,
+                    statusMessage: statusMessage,
+                    generatedId: generatedId,
+                    backgroundImageBase64: backgroundImageBase64, // 배경 이미지 필드 추가
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                }, { merge: true });
+                console.log('개인 사용자 프로필 저장 성공:', { userId, name, generatedId });
+
+                // 2. 공개 사용자 프로필 저장 (public)
+                const publicUserProfileRef = db.collection('artifacts').doc(appId).collection('public').doc('data').collection('user_public_profiles').doc(userId);
+                await publicUserProfileRef.set({
+                    name: name,
+                    statusMessage: statusMessage,
+                    profileImageBase64: profileImageBase64,
+                    backgroundImageBase64: backgroundImageBase64, // 배경 이미지 필드 추가
+                    generatedId: generatedId,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                }, { merge: true });
+                console.log('공개 사용자 프로필 저장 성공:', { userId, name, generatedId });
+
+                // 3. 생성된 ID와 Firebase UID 매핑 저장 (public)
+                const publicUserIdRef = db.collection('artifacts').doc(appId).collection('public').doc('data').collection('user_ids').doc(generatedId);
+                await publicUserIdRef.set({
+                    userId: userId,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                }, { merge: true });
+                console.log('공개 ID 매핑 저장 성공:', generatedId);
+
+                return true;
+            } catch (error) {
+                console.error('사용자 프로필 저장 오류:', error);
+                showMessage('정보 저장에 실패했습니다. 다시 시도해주세요.', true);
+                return false;
+            }
+        }
+
+
+        // 프로필 편집 모달 열기
+        async function openEditProfileModal() {
+            if (!currentUserId) {
+                showMessage('로그인된 사용자만 프로필을 편집할 수 있습니다.', true);
+                return;
+            }
+
+            const myProfile = await getPrivateUserProfile(currentUserId);
+            if (myProfile) {
+                currentProfileData = myProfile; // 현재 프로필 데이터 저장
+
+                editProfileNameInput.value = myProfile.name || '';
+                editProfileStatusInput.value = myProfile.statusMessage || '';
+                editProfileImagePreview.src = myProfile.profileImageBase64 || 'https://placehold.co/96x96/CCCCCC/FFFFFF?text=Upload';
+                editBackgroundImagePreview.src = myProfile.backgroundImageBase64 || 'https://placehold.co/400x96/E0F2F7/6B7280?text=Background';
+
+                editProfileModal.classList.add('show');
+            } else {
+                showMessage('내 프로필 정보를 불러올 수 없습니다.', true);
+            }
+        }
+
+        // 프로필 편집 모달 닫기
+        function closeEditProfileModal() {
+            editProfileModal.classList.remove('show');
+            // 입력 필드 초기화 (선택 사항)
+            editProfileImageInput.value = '';
+            editBackgroundImageInput.value = '';
+        }
+
+        // 이미지 파일 읽기 유틸리티
+        function readFileAsBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = (e) => resolve(e.target.result);
+                reader.onerror = (e) => reject(e);
+                reader.readAsDataURL(file);
+            });
+        }
+
+        // 프로필 변경 사항 저장
+        async function saveEditedProfile() {
+            if (!currentUserId) {
+                showMessage('로그인된 사용자 정보가 없습니다.', true);
+                return;
+            }
+
+            const newName = editProfileNameInput.value.trim();
+            const newStatusMessage = editProfileStatusInput.value.trim();
+            let newProfileImageBase64 = currentProfileData.profileImageBase64;
+            let newBackgroundImageBase64 = currentProfileData.backgroundImageBase64;
+
+            // 프로필 이미지 변경 감지 및 처리
+            if (editProfileImageInput.files && editProfileImageInput.files[0]) {
+                try {
+                    newProfileImageBase64 = await readFileAsBase64(editProfileImageInput.files[0]);
+                } catch (error) {
+                    console.error('프로필 이미지 읽기 오류:', error);
+                    showMessage('프로필 이미지 업로드에 실패했습니다.', true);
+                    return;
+                }
+            }
+
+            // 배경 이미지 변경 감지 및 처리
+            if (editBackgroundImageInput.files && editBackgroundImageInput.files[0]) {
+                try {
+                    newBackgroundImageBase64 = await readFileAsBase64(editBackgroundImageInput.files[0]);
+                } catch (error) {
+                    console.error('배경 이미지 읽기 오류:', error);
+                    showMessage('배경 이미지 업로드에 실패했습니다.', true);
+                    return;
+                }
+            }
+
+            // 변경된 내용으로 프로필 업데이트
+            const success = await saveUserProfile(
+                currentUserId,
+                newProfileImageBase64,
+                newName,
+                newStatusMessage,
+                currentProfileData.generatedId, // generatedId는 변경되지 않음
+                newBackgroundImageBase64
+            );
+
+            if (success) {
+                showMessage('프로필이 성공적으로 업데이트되었습니다.');
+                closeEditProfileModal();
+                // 업데이트된 프로필을 다시 로드하여 UI에 반영
+                await loadFriendProfile(currentUserId);
+            } else {
+                showMessage('프로필 업데이트에 실패했습니다.', true);
+            }
+        }
+
 
         // DOMContentLoaded 이벤트 리스너
         document.addEventListener('DOMContentLoaded', async () => {
@@ -655,6 +987,41 @@
 
         if (deleteFriendButton) {
             deleteFriendButton.addEventListener('click', deleteFriend);
+        }
+
+        // 편집 아이콘 클릭 이벤트
+        if (editProfileIcon) {
+            editProfileIcon.addEventListener('click', openEditProfileModal);
+        }
+
+        // 프로필 이미지 입력 변경 시 미리보기 업데이트
+        if (editProfileImageInput) {
+            editProfileImageInput.addEventListener('change', async (event) => {
+                if (event.target.files && event.target.files[0]) {
+                    const base64 = await readFileAsBase64(event.target.files[0]);
+                    editProfileImagePreview.src = base64;
+                }
+            });
+        }
+
+        // 배경 이미지 입력 변경 시 미리보기 업데이트
+        if (editBackgroundImageInput) {
+            editBackgroundImageInput.addEventListener('change', async (event) => {
+                if (event.target.files && event.target.files[0]) {
+                    const base64 = await readFileAsBase64(event.target.files[0]);
+                    editBackgroundImagePreview.src = base64;
+                }
+            });
+        }
+
+        // 프로필 변경 저장 버튼
+        if (saveProfileChangesButton) {
+            saveProfileChangesButton.addEventListener('click', saveEditedProfile);
+        }
+
+        // 프로필 편집 취소 버튼
+        if (cancelEditProfileButton) {
+            cancelEditProfileButton.addEventListener('click', closeEditProfileModal);
         }
     </script>
 </body>
