@@ -473,26 +473,40 @@
                 console.error('Firestore 인스턴스가 초기화되지 않았습니다.');
                 return false;
             }
-            // Firestore 보안 규칙에 따라 artifacts/{appId}/users/{userId}/profile/user_data 경로 사용
-            const userProfileRef = db.collection('artifacts').doc(appId).collection('users').doc(userId).collection('profile').doc('user_data');
             try {
-                await userProfileRef.set({
+                // 1. 개인 프로필 저장 (private)
+                const privateUserProfileRef = db.collection('artifacts').doc(appId).collection('users').doc(userId).collection('profile').doc('user_data');
+                await privateUserProfileRef.set({
                     profileImageBase64: profileImageBase64,
                     name: name,
                     statusMessage: statusMessage,
                     generatedId: generatedId,
-                    updatedAt: firebase.firestore.FieldValue.serverTimestamp() // 서버 타임스탬프 추가
-                }, { merge: true }); // 기존 데이터가 있다면 병합
-                console.log('사용자 프로필 저장 성공:', { userId, name, generatedId });
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                }, { merge: true });
+                console.log('개인 사용자 프로필 저장 성공:', { userId, name, generatedId });
 
-                // 생성된 ID를 public collection에 저장하여 중복 확인에 사용
-                // 보안 규칙에 따라 /artifacts/{appId}/public/data/user_ids/{generatedId} 경로 사용
+                // 2. 공개 사용자 프로필 저장 (public)
+                // 이 데이터는 친구 목록 등에서 다른 사용자가 조회할 수 있도록 사용됩니다.
+                // 문서 ID는 사용자의 Firebase UID여야 합니다.
+                const publicUserProfileRef = db.collection('artifacts').doc(appId).collection('public').doc('data').collection('user_public_profiles').doc(userId);
+                await publicUserProfileRef.set({
+                    name: name,
+                    statusMessage: statusMessage,
+                    profileImageBase64: profileImageBase64,
+                    generatedId: generatedId,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                }, { merge: true });
+                console.log('공개 사용자 프로필 저장 성공:', { userId, name, generatedId });
+
+
+                // 3. 생성된 ID와 Firebase UID 매핑 저장 (public)
+                // 이 데이터는 generatedId를 통해 Firebase UID를 찾는 데 사용됩니다.
                 const publicUserIdRef = db.collection('artifacts').doc(appId).collection('public').doc('data').collection('user_ids').doc(generatedId);
                 await publicUserIdRef.set({
                     userId: userId,
                     createdAt: firebase.firestore.FieldValue.serverTimestamp()
                 }, { merge: true });
-                console.log('공개 ID 저장 성공:', generatedId);
+                console.log('공개 ID 매핑 저장 성공:', generatedId);
 
                 return true;
             } catch (error) {
