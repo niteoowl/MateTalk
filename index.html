@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MateTalk | 홈</title>
+    <!-- Tailwind CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Google Fonts - Inter (Pretendard 폴백) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Firebase SDK CDN -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <style>
+        /* Pretendard 웹폰트 적용 */
+        @font-face {
+            font-family: 'Pretendard-Regular';
+            src: url('https://fastly.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff') format('woff');
+            font-weight: 400;
+            font-style: normal;
+        }
+
+        /* Pretendard 폰트를 기본으로 사용하고, Inter 및 sans-serif를 폴백으로 설정합니다. */
+        body {
+            font-family: 'Pretendard-Regular', 'Inter', sans-serif;
+            background-color: #f3f4f6; /* 배경색을 약간 회색으로 설정하여 콘텐츠가 돋보이게 함 */
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* 상단 정렬 */
+            min-height: 100vh; /* 뷰포트 높이 전체를 차지하도록 설정 */
+            margin: 0;
+            padding: 0;
+            overflow-y: hidden; /* 중요: body 스크롤을 막고, 앱 컨테이너 내부 스크롤만 허용 */
+            -webkit-overflow-scrolling: touch; /* iOS 부드러운 스크롤 */
+        }
+
+        /* 메인 컨테이너: 모바일 화면처럼 중앙에 배치되고 최대 너비 제한, 높이 고정 */
+        .main-app-container {
+            width: 100%;
+            max-width: 420px; /* 모바일 기기 너비에 가깝게 설정 */
+            height: 100vh; /* 중요: 뷰포트 높이만큼 고정 */
+            background-color: #ffffff; /* 앱 내부 배경색 흰색 */
+            display: flex;
+            flex-direction: column;
+            position: relative; /* 하단 바를 위한 상대 위치 */
+            overflow: hidden; /* 중요: 이 컨테이너 내부에서만 스크롤이 발생하도록 오버플로우 숨김 */
+        }
+
+        /* 헤더 스타일 */
+        .app-header {
+            width: 100%;
+            padding: 16px 20px; /* 좌우 패딩 */
+            background-color: #ffffff;
+            border-bottom: 1px solid #e5e7eb; /* 옅은 회색 구분선 */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky; /* 스크롤 시 상단 고정 (main-app-container 내에서) */
+            top: 0;
+            z-index: 20; /* 다른 요소 위에 표시 */
+        }
+
+        .header-title {
+            font-size: 1.25rem; /* 20px */
+            font-weight: 700; /* Bold */
+            color: #1f2937; /* Dark gray */
+        }
+
+        .header-icon {
+            width: 24px;
+            height: 24px;
+            color: #6b7280; /* Gray icon */
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .header-icon:hover {
+            color: #3b82f6; /* Blue on hover */
+        }
+
+        /* 프로필 섹션 스타일 */
+        .profile-section {
+            display: flex;
+            align-items: center;
+            padding: 16px 20px; /* 헤더와 유사한 패딩 */
+            background-color: #ffffff;
+            border-bottom: 1px solid #e5e7eb; /* 구분선 */
+        }
+
+        .profile-avatar {
+            width: 60px; /* 아바타 크기 */
+            height: 60px; /* 아바타 크기 */
+            border-radius: 50%; /* 원형 */
+            background-color: #a78bfa; /* 보라색 아바타 배경 */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2rem; /* 글자 크기 */
+            font-weight: 600;
+            color: #ffffff;
+            flex-shrink: 0;
+            margin-right: 16px; /* 아바타와 텍스트 사이 간격 */
+            overflow: hidden; /* 이미지가 원 밖으로 넘어가지 않도록 */
+        }
+
+        .profile-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* 이미지가 원형에 맞게 채워지도록 */
+        }
+
+        .profile-info {
+            flex-grow: 1;
+            overflow: hidden;
+        }
+
+        .profile-name {
+            font-size: 1.125rem; /* 18px */
+            font-weight: 700;
+            color: #1f2937;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .profile-status {
+            font-size: 0.875rem; /* 14px */
+            color: #6b7280;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-top: 2px;
+        }
+
+        /* 채팅 목록 컨테이너 */
+        .chat-list-container {
+            flex-grow: 1; /* 남은 공간을 모두 차지하도록 */
+            overflow-y: auto; /* 중요: 이 컨테이너에서 세로 스크롤 발생 */
+            padding-bottom: 80px; /* 하단 내비게이션 바 공간 확보 (60px 바 높이 + 여유 공간) */
+            /* 스크롤바 숨기기 */
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+
+        /* WebKit 브라우저 (Chrome, Safari) 스크롤바 숨기기 */
+        .chat-list-container::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* 개별 채팅 아이템 스타일 */
+        .chat-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px; /* 좌우 패딩 유지 */
+            border-bottom: 1px solid #f3f4f6; /* 옅은 회색 구분선 */
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .chat-item:hover {
+            background-color: #f9fafb; /* 호버 시 배경색 변경 */
+        }
+
+        .chat-avatar-small { /* 채팅 아이템용 아바타 */
+            width: 48px;
+            height: 48px;
+            border-radius: 50%; /* 원형 아바타 */
+            background-color: #d1d5db; /* 기본 아바타 배경색 */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5rem;
+            color: #ffffff;
+            flex-shrink: 0; /* 축소되지 않도록 */
+            overflow: hidden; /* 이미지가 원 밖으로 넘어가지 않도록 */
+        }
+
+        .chat-avatar-small img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .chat-content {
+            flex-grow: 1;
+            margin-left: 12px;
+            overflow: hidden; /* 텍스트 넘침 방지 */
+        }
+
+        .chat-name {
+            font-weight: 600; /* SemiBold */
+            color: #1f2937;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .chat-last-message {
+            font-size: 0.875rem; /* 14px */
+            color: #6b7280;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-top: 2px;
+        }
+
+        .chat-time {
+            font-size: 0.75rem; /* 12px */
+            color: #9ca3af;
+            margin-left: 10px;
+            flex-shrink: 0;
+        }
+
+        /* 하단 내비게이션 바 */
+        .bottom-nav {
+            width: 100%;
+            height: 60px; /* 내비게이션 바 높이 */
+            background-color: #ffffff;
+            border-top: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            position: absolute; /* 메인 컨테이너 하단에 고정 */
+            bottom: 0;
+            left: 0;
+            z-index: 20;
+            /* safe-area-inset-bottom을 고려한 패딩 */
+            padding-bottom: env(safe-area-inset-bottom, 0px);
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex: 1; /* 공간 균등 분배 */
+            cursor: pointer;
+            color: #9ca3af; /* 기본 아이콘 색상 */
+            transition: color 0.2s ease;
+        }
+
+        .nav-item.active {
+            color: #3b82f6; /* 활성 아이콘 색상 */
+        }
+
+        .nav-item:hover {
+            color: #3b82f6; /* 호버 시 아이콘 색상 변경 */
+        }
+
+        .nav-icon {
+            width: 24px;
+            height: 24px;
+            margin-bottom: 4px;
+        }
+
+        .nav-text {
+            font-size: 0.75rem; /* 12px */
+            font-weight: 500;
+        }
+
+        /* --- 로그인 페이지에서 가져온 스타일 (디자인 일관성을 위해 추가) --- */
+        /* 입력 필드 스타일 */
+        .input-field {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #D1D5DB; /* Light gray border */
+            border-radius: 14px;
+            font-size: 1rem;
+            box-sizing: border-box; /* padding and border included in element's total width and height */
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: #3B82F6; /* Blue border on focus */
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2); /* Light blue shadow on focus */
+        }
+
+        /* 기본 액션 버튼 스타일 */
+        .action-button {
+            background-color: #3B82F6; /* 버튼 배경색 */
+            color: white;
+            font-weight: 500; /* Medium */
+            padding: 10px 28px; /* 패딩 조정 */
+            border-radius: 14px; /* 모서리 둥글기 조정 */
+            width: 100%;
+            transition: background-color 0.3s ease; /* 호버 효과를 위한 트랜지션 */
+        }
+
+        .action-button:hover {
+            background-color: #2563EB; /* 호버 시 버튼 색상 변경 */
+        }
+        /* --- 로그인 페이지 스타일 끝 --- */
+
+        /* 친구 추가 패널 스타일 */
+        .friend-add-panel {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: #ffffff;
+            border-top-left-radius: 1rem; /* rounded-xl */
+            border-top-right-radius: 1rem; /* rounded-xl */
+            box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.1); /* 하단에서 올라오는 그림자 */
+            z-index: 30; /* 내비게이션 바 위에 표시 */
+            transform: translateY(100%); /* 초기에는 화면 아래에 숨김 */
+            transition: transform 0.3s ease-out; /* 슬라이드 애니메이션 */
+            display: flex;
+            flex-direction: column;
+            padding-bottom: env(safe-area-inset-bottom, 0px); /* 하단 안전 영역 패딩 */
+        }
+
+        .friend-add-panel.is-visible {
+            transform: translateY(0%); /* 패널이 보이도록 위로 슬라이드 */
+        }
+
+        .friend-add-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 20px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        /* 오버레이 스타일 */
+        .overlay {
+            position: fixed; /* 뷰포트에 고정 */
+            inset: 0; /* 전체 화면을 덮음 */
+            background-color: rgba(0, 0, 0, 0.25); /* 반투명 검정색 */
+            z-index: 25; /* 앱 컨테이너와 패널 사이에 위치 */
+            opacity: 0; /* 초기에는 투명 */
+            transition: opacity 0.3s ease-out; /* 페이드 애니메이션 */
+            pointer-events: none; /* 초기에는 클릭 이벤트 무시 */
+        }
+
+        .overlay.is-visible {
+            opacity: 1; /* 보이게 될 때 불투명 */
+            pointer-events: auto; /* 클릭 이벤트 활성화 */
+        }
+
+        /* 메시지 박스 스타일 */
+        .message-box {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #4CAF50; /* Green for success */
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            z-index: 100;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        .message-box.error {
+            background-color: #f44336; /* Red for error */
+        }
+
+        .message-box.show {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <!-- 오버레이 (친구 추가 패널 뒤 배경을 어둡게 함) -->
+    <div id="friendAddOverlay" class="overlay"></div>
+
+    <div class="main-app-container bg-white">
+        <!-- 헤더 -->
+        <header class="app-header">
+            <h1 class="header-title">MATES</h1>
+            <div class="flex items-center space-x-4">
+                <!-- 검색 아이콘 -->
+                <svg class="header-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                </svg>
+                <!-- 친구 추가 (+) 아이콘 -->
+                <svg id="addFriendIcon" class="header-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                </svg>
+            </div>
+        </header>
+
+        <!-- 채팅 목록 (MATES 페이지의 실제 콘텐츠가 여기에 들어갈 수 있습니다) -->
+        <main class="chat-list-container">
+            <!-- 프로필 섹션 (이제 스크롤 가능 영역 안에 위치) -->
+            <div class="profile-section">
+                <div class="profile-avatar" id="myProfileAvatar">
+                    <!-- 프로필 이미지 또는 이니셜 -->
+                    <img id="myProfileImage" src="https://placehold.co/60x60/CCCCCC/FFFFFF?text=나" alt="내 프로필 이미지" class="hidden">
+                    <span id="myProfileInitials">나</span>
+                </div>
+                <div class="profile-info">
+                    <div class="profile-name" id="myProfileName">내 이름</div>
+                    <div class="profile-status" id="myProfileStatus">상태 메시지를 입력하세요.</div>
+                </div>
+            </div>
+
+            <!-- 친구 목록이 동적으로 여기에 삽입됩니다 -->
+            <div id="friendsListContainer">
+                <!-- 예시 친구/MATES 아이템 (동적으로 생성될 예정) -->
+            </div>
+
+        </main>
+
+        <!-- 하단 내비게이션 바 -->
+        <nav class="bottom-nav">
+            <!-- MATES 탭 (활성화) -->
+            <div class="nav-item active">
+                <svg class="nav-icon" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.972 5.972 0 004 15v3H1v-3a3 3 0 013.75-2.906z"></path>
+                </svg>
+                <span class="nav-text">MATES</span>
+            </div>
+            <!-- 채팅 탭 -->
+            <div class="nav-item">
+                <svg class="nav-icon" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M2 5a2 2 0 012-2h7a2 2 0 012 2v4a2 2 0 01-2 2H9l-3 3v-3H4a2 2 0 01-2-2V5z"></path>
+                    <path d="M15 7v2a4 4 0 01-4 4H9.024l-.32 2.87a1 1 0 00.552 1.033l.39.26a1 1 0 001.112-.231l2.494-3.044A3 3 0 0015 9V7h-1.5zm-1.5 0H15V9a3 3 0 00-3 3h-.024l-.32 2.87a1 1 0 00.552 1.033l.39.26a1 1 0 001.112-.231l2.494-3.044A3 3 0 0015 9V7h-1.5z"></path>
+                </svg>
+                <span class="nav-text">채팅</span>
+            </div>
+            <!-- LIVE 탭 -->
+            <div class="nav-item">
+                <svg class="nav-icon" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path>
+                </svg>
+                <span class="nav-text">LIVE</span>
+            </div>
+            <!-- 더보기 탭 -->
+            <div class="nav-item">
+                <svg class="nav-icon" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z"></path>
+                </svg>
+                <span class="nav-text">더보기</span>
+            </div>
+        </nav>
+
+        <!-- 친구 추가 패널 -->
+        <div id="friendAddPanel" class="friend-add-panel">
+            <div class="friend-add-header">
+                <h2 class="text-lg font-semibold text-gray-800">친구 추가</h2>
+                <button id="closeFriendAdd" class="text-gray-500 hover:text-gray-700">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <div class="p-4 flex-grow">
+                <input type="text" id="friendIdInput" placeholder="친구 ID를 입력하세요" class="input-field mb-4">
+                <button id="addFriendButton" class="action-button w-full">친구 추가</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 메시지 박스 -->
+    <div id="messageBox" class="message-box"></div>
+
+    <script type="module">
+        // Firebase SDK 가져오기
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc, updateDoc, arrayUnion, onSnapshot, collection } from "https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js";
+
+        // Canvas 환경에서 제공되는 전역 변수
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = {
+            apiKey: "AIzaSyALUv0zMoBExmhZJd2idSfmB_-DbPAAdL8",
+            authDomain: "grind-mate-a.firebaseapp.com",
+            projectId: "grind-mate-a",
+            storageBucket: "grind-mate-a.firebasestorage.app",
+            messagingSenderId: "704910171892",
+            appId: "1:704910171892:web:908b2b625e46aa7a5e48a1",
+            measurementId: "G-WQH66CMVP1"
+        };
+
+        // Firebase 앱 초기화 (이미 초기화된 경우 건너뛰기)
+        let app;
+        if (firebase.apps.length === 0) {
+            app = initializeApp(firebaseConfig);
+        } else {
+            app = firebase.app();
+        }
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // DOM 요소 가져오기
+        const myProfileAvatar = document.getElementById('myProfileAvatar');
+        const myProfileImage = document.getElementById('myProfileImage');
+        const myProfileInitials = document.getElementById('myProfileInitials');
+        const myProfileName = document.getElementById('myProfileName');
+        const myProfileStatus = document.getElementById('myProfileStatus');
+        const friendsListContainer = document.getElementById('friendsListContainer');
+        const addFriendIcon = document.getElementById('addFriendIcon');
+        const friendAddPanel = document.getElementById('friendAddPanel');
+        const closeFriendAddButton = document.getElementById('closeFriendAdd');
+        const friendAddOverlay = document.getElementById('friendAddOverlay');
+        const friendIdInput = document.getElementById('friendIdInput');
+        const addFriendButton = document.getElementById('addFriendButton');
+        const messageBox = document.getElementById('messageBox'); // 메시지 박스 요소
+
+        let currentUserId = null; // 현재 로그인된 사용자 ID
+
+        // 메시지를 표시하는 유틸리티 함수
+        function showMessage(message, isError = false) {
+            messageBox.textContent = message;
+            messageBox.classList.remove('error', 'show'); // 기존 클래스 제거
+            if (isError) {
+                messageBox.classList.add('error');
+            }
+            messageBox.classList.add('show');
+
+            setTimeout(() => {
+                messageBox.classList.remove('show');
+            }, 3000); // 3초 후 메시지 숨김
+        }
+
+        // 사용자 프로필을 Firestore에서 가져오는 함수
+        async function getUserProfile(userId) {
+            if (!db) {
+                console.error('Firestore 인스턴스가 초기화되지 않았습니다.');
+                return null;
+            }
+            const userProfileRef = doc(collection(collection(doc(collection(db, 'artifacts'), appId), 'users'), userId), 'profile', 'user_data');
+            try {
+                const userDoc = await getDoc(userProfileRef);
+                if (userDoc.exists()) {
+                    return userDoc.data();
+                } else {
+                    console.log(`사용자 프로필을 찾을 수 없습니다: ${userId}`);
+                    return null;
+                }
+            } catch (error) {
+                console.error(`사용자 프로필을 가져오는 중 오류 발생 (${userId}):`, error);
+                return null;
+            }
+        }
+
+        // 친구 목록을 가져와 렌더링하는 함수
+        async function renderFriendsList(userId) {
+            if (!db || !userId) return;
+
+            friendsListContainer.innerHTML = ''; // 기존 목록 초기화
+            const friendsCollectionRef = collection(collection(doc(collection(db, 'artifacts'), appId), 'users'), userId, 'friends');
+
+            // 실시간 업데이트를 위해 onSnapshot 사용
+            onSnapshot(friendsCollectionRef, async (snapshot) => {
+                friendsListContainer.innerHTML = ''; // 변경 시 목록 초기화
+                const friendPromises = snapshot.docs.map(async (friendDoc) => {
+                    const friendData = friendDoc.data();
+                    const friendId = friendData.friendUserId; // 친구의 실제 UID
+
+                    if (friendId) {
+                        const friendProfile = await getUserProfile(friendId);
+                        if (friendProfile) {
+                            return { id: friendId, ...friendProfile };
+                        }
+                    }
+                    return null;
+                });
+
+                const friends = (await Promise.all(friendPromises)).filter(f => f !== null);
+
+                if (friends.length === 0) {
+                    friendsListContainer.innerHTML = `
+                        <div class="p-4 text-center text-gray-500">
+                            아직 친구가 없습니다. 친구를 추가해보세요!
+                        </div>
+                    `;
+                    return;
+                }
+
+                friends.forEach(friend => {
+                    const chatItem = document.createElement('div');
+                    chatItem.className = 'chat-item';
+                    chatItem.innerHTML = `
+                        <div class="chat-avatar-small" style="background-color: ${friend.profileImageBase64 ? 'transparent' : '#d1d5db'};">
+                            ${friend.profileImageBase64 ? `<img src="${friend.profileImageBase64}" alt="${friend.name || '친구'} 프로필 이미지">` : `<span>${(friend.name || '친구').charAt(0)}</span>`}
+                        </div>
+                        <div class="chat-content">
+                            <div class="chat-name">${friend.name || '알 수 없는 친구'}</div>
+                            <div class="chat-last-message">${friend.statusMessage || '상태 메시지 없음'}</div>
+                        </div>
+                        <div class="chat-time">${friend.generatedId || ''}</div>
+                    `;
+                    friendsListContainer.appendChild(chatItem);
+                });
+            }, (error) => {
+                console.error("친구 목록 실시간 업데이트 오류:", error);
+                showMessage('친구 목록을 불러오는 데 실패했습니다.', true);
+            });
+        }
+
+
+        // 친구 추가 패널을 표시하는 함수
+        function showFriendAddPanel() {
+            friendAddOverlay.classList.add('is-visible');
+            friendAddPanel.classList.add('is-visible');
+        }
+
+        // 친구 추가 패널을 숨기는 함수
+        function hideFriendAddPanel() {
+            friendAddOverlay.classList.remove('is-visible');
+            friendAddPanel.classList.remove('is-visible');
+            friendIdInput.value = ''; // 입력 필드 초기화
+        }
+
+        // 친구 추가 로직
+        async function addFriend() {
+            if (!currentUserId) {
+                showMessage('로그인 후 친구를 추가할 수 있습니다.', true);
+                return;
+            }
+
+            const friendGeneratedId = friendIdInput.value.trim();
+            if (!friendGeneratedId) {
+                showMessage('친구 ID를 입력해주세요.', true);
+                return;
+            }
+
+            if (friendGeneratedId === myProfileInitials.textContent.trim() || friendGeneratedId === myProfileName.textContent.trim()) { // Check against displayed ID/Name
+                 showMessage('자신을 친구로 추가할 수 없습니다.', true);
+                 return;
+            }
+
+
+            // 1. public/user_ids 컬렉션에서 friendGeneratedId에 해당하는 userId 찾기
+            const publicUserIdRef = doc(collection(collection(doc(collection(db, 'artifacts'), appId), 'public'), 'user_ids'), friendGeneratedId);
+            let friendUserId = null;
+            try {
+                const docSnap = await getDoc(publicUserIdRef);
+                if (docSnap.exists()) {
+                    friendUserId = docSnap.data().userId;
+                } else {
+                    showMessage('해당 ID를 가진 친구를 찾을 수 없습니다.', true);
+                    return;
+                }
+            } catch (error) {
+                console.error("공개 ID 조회 오류:", error);
+                showMessage('친구 ID를 확인하는 중 오류가 발생했습니다.', true);
+                return;
+            }
+
+            if (!friendUserId) {
+                showMessage('해당 ID를 가진 친구를 찾을 수 없습니다.', true);
+                return;
+            }
+
+            // 2. 이미 친구인지 확인
+            const currentUserFriendsRef = collection(collection(doc(collection(db, 'artifacts'), appId), 'users'), currentUserId, 'friends');
+            const friendDocRef = doc(currentUserFriendsRef, friendUserId); // 친구의 UID를 문서 ID로 사용
+
+            try {
+                const existingFriendDoc = await getDoc(friendDocRef);
+                if (existingFriendDoc.exists()) {
+                    showMessage('이미 친구로 추가된 사용자입니다.', false);
+                    return;
+                }
+            } catch (error) {
+                console.error("친구 중복 확인 오류:", error);
+                showMessage('친구 상태를 확인하는 중 오류가 발생했습니다.', true);
+                return;
+            }
+
+            // 3. 친구 추가 (현재 사용자의 friends 컬렉션에 추가)
+            try {
+                await setDoc(friendDocRef, {
+                    friendUserId: friendUserId,
+                    addedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                showMessage(`${friendGeneratedId}님을 친구로 추가했습니다.`, false);
+                hideFriendAddPanel();
+                // 친구 목록은 onSnapshot에 의해 자동으로 업데이트됩니다.
+            } catch (error) {
+                console.error("친구 추가 오류:", error);
+                showMessage('친구 추가에 실패했습니다. 다시 시도해주세요.', true);
+            }
+        }
+
+
+        // 인증 상태 변경 감지
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                currentUserId = user.uid;
+                console.log('사용자 로그인됨 (UID):', currentUserId);
+
+                const profile = await getUserProfile(currentUserId);
+                if (profile && profile.generatedId && profile.name && profile.statusMessage) {
+                    // 프로필 정보 업데이트
+                    myProfileName.textContent = profile.name;
+                    myProfileStatus.textContent = profile.statusMessage;
+                    if (profile.profileImageBase64) {
+                        myProfileImage.src = profile.profileImageBase64;
+                        myProfileImage.classList.remove('hidden');
+                        myProfileInitials.classList.add('hidden');
+                    } else {
+                        myProfileInitials.textContent = profile.name ? profile.name.charAt(0) : '나';
+                        myProfileImage.classList.add('hidden');
+                        myProfileInitials.classList.remove('hidden');
+                    }
+
+                    // 친구 목록 로드 및 실시간 업데이트 시작
+                    renderFriendsList(currentUserId);
+
+                } else {
+                    console.log('프로필이 불완전합니다. 로그인 페이지로 리디렉션합니다.');
+                    window.location.href = "/login"; // 프로필 설정이 필요하면 로그인 페이지로 리디렉션
+                }
+            } else {
+                currentUserId = null;
+                console.log('사용자 로그아웃됨. 로그인 페이지로 리디렉션합니다.');
+                window.location.href = "/login"; // 로그인되지 않았으면 로그인 페이지로 리디렉션
+            }
+        });
+
+        // 이벤트 리스너
+        if (addFriendIcon) {
+            addFriendIcon.addEventListener('click', showFriendAddPanel);
+        }
+
+        if (closeFriendAddButton) {
+            closeFriendAddButton.addEventListener('click', hideFriendAddPanel);
+        }
+
+        if (friendAddOverlay) {
+            friendAddOverlay.addEventListener('click', hideFriendAddPanel); // 오버레이 클릭 시 닫기
+        }
+
+        if (addFriendButton) {
+            addFriendButton.addEventListener('click', addFriend);
+        }
+    </script>
+</body>
+</html>
