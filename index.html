@@ -588,7 +588,6 @@
                         window.location.href = "/login"; // Redirect to login page if not logged in
                     }
                 });
-
             } else {
                 console.warn('Firebase configuration not provided correctly. Login functionality may not work. Check firebaseConfig variable.');
             }
@@ -737,6 +736,10 @@
                         </div>
                         <div class="chat-time">${friend.generatedId || ''}</div>
                     `;
+                    // Add click event listener to navigate to friend's profile page
+                    chatItem.addEventListener('click', () => {
+                        window.location.href = `/profile/${friend.id}`; // Navigate to /profile/friendUID
+                    });
                     friendsListContainer.appendChild(chatItem);
                 });
             }, (error) => {
