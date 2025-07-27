@@ -483,6 +483,9 @@
         let auth;
         let db;
 
+        // Global variable for initial auth token (provided by Canvas)
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
         // Initialize Firebase and assign instances inside DOMContentLoaded event listener
         document.addEventListener('DOMContentLoaded', async () => {
             console.log('DOMContentLoaded event fired. Starting app initialization.');
@@ -494,6 +497,15 @@
                     auth = firebase.auth();
                     db = firebase.firestore();
                     console.log('Firebase app and Firestore initialized successfully.');
+
+                    // Sign in with custom token or anonymously
+                    if (initialAuthToken) {
+                        await auth.signInWithCustomToken(initialAuthToken);
+                        console.log('Signed in with custom token.');
+                    } else {
+                        await auth.signInAnonymously();
+                        console.log('Signed in anonymously.');
+                    }
 
                     // onAuthStateChanged detects login state changes, so initial UI decisions are made here.
                     auth.onAuthStateChanged(async (user) => {
@@ -528,13 +540,22 @@
                     });
 
                 } catch (error) {
-                    console.error('Firebase app initialization failed:', error);
+                    console.error('Firebase app initialization or sign-in failed:', error);
                 }
             } else if (firebase.apps.length > 0) {
                 app = firebase.app();
                 auth = firebase.auth();
                 db = firebase.firestore(); // Get Firestore from existing app instance
                 console.log('Firebase app is already initialized. Using existing instance.');
+
+                // Sign in with custom token or anonymously
+                if (initialAuthToken) {
+                    await auth.signInWithCustomToken(initialAuthToken);
+                    console.log('Signed in with custom token (existing app instance).');
+                } else {
+                    await auth.signInAnonymously();
+                    console.log('Signed in anonymously (existing app instance).');
+                }
 
                 // onAuthStateChanged detects login state changes, so initial UI decisions are made here.
                 auth.onAuthStateChanged(async (user) => {
@@ -634,20 +655,22 @@
                 console.error('Firestore instance not initialized for public profile.');
                 return null;
             }
-            // Fetch from public profile data
+            // Public profiles should ideally be stored with the user's Firebase UID as the document ID.
+            // Path: artifacts/{appId}/public/data/user_public_profiles/{user_UID}
             const publicUserProfilesPath = `artifacts/${appId}/public/data/user_public_profiles`;
-            const publicUserProfileRef = db.collection(publicUserProfilesPath).doc(userId);
+            const publicUserProfileRef = db.collection(publicUserProfilesPath).doc(userId); // userId here is expected to be the Firebase UID
             try {
                 const userDoc = await publicUserProfileRef.get();
                 if (userDoc.exists) {
-                    console.log(`Successfully fetched public profile for ${userId}:`, userDoc.data());
+                    console.log(`Successfully fetched public profile for UID ${userId}:`, userDoc.data());
                     return userDoc.data();
                 } else {
-                    console.log(`Public profile not found for userId: ${userId}`);
+                    // Log an error if the public profile is not found, as it indicates a data inconsistency.
+                    console.error(`Public profile document not found for UID: ${userId}. Ensure public profiles are stored with UID as document ID.`);
                     return null;
                 }
             } catch (error) {
-                console.error(`Error fetching public profile for userId ${userId}:`, error);
+                console.error(`Error fetching public profile for UID ${userId}:`, error);
                 return null;
             }
         }
@@ -676,12 +699,12 @@
                     console.log('Processing friendDoc:', friendDoc.id, 'friendUserId:', friendId);
 
                     if (friendId) {
-                        const friendProfile = await getPublicUserProfile(friendId); // Get friend profile from public profiles
+                        const friendProfile = await getPublicUserProfile(friendId); // Get friend profile from public profiles using their UID
                         if (friendProfile) {
                             console.log(`Found public profile for friendId ${friendId}:`, friendProfile);
                             return { id: friendId, ...friendProfile };
                         } else {
-                            console.warn(`Public profile not found for friendId: ${friendId}. Skipping this friend.`);
+                            console.warn(`Public profile not found for friendId (UID): ${friendId}. Skipping this friend.`);
                         }
                     } else {
                         console.warn('friendUserId is missing in friend document:', friendDoc.id);
