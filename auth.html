@@ -187,46 +187,66 @@
             transition: opacity 0.3s ease-out, transform 0.3s ease-out;
         }
 
-        /* 학교 검색 결과 드롭다운 스타일 */
-        #schoolSearchResults {
-            position: absolute;
-            background-color: white;
-            border: 1px solid #D1D5DB;
-            border-radius: 8px;
-            max-height: 200px;
-            overflow-y: auto;
-            width: 100%;
-            z-index: 10;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            top: calc(100% + 5px); /* search input 바로 아래에 위치 */
-            left: 0;
-        }
-
-        #schoolSearchResults div {
-            padding: 10px 16px;
-            cursor: pointer;
-            border-bottom: 1px solid #E5E7EB;
-        }
-
-        #schoolSearchResults div:last-child {
-            border-bottom: none;
-        }
-
-        #schoolSearchResults div:hover {
-            background-color: #F3F4F6;
-        }
-
-        .school-search-container {
-            position: relative; /* 자식 요소인 검색 결과 목록의 absolute 위치를 위한 기준 */
-            width: 100%;
-            margin-bottom: 12px; /* 아래 요소와의 간격 */
-        }
-
-        .search-input-group {
+        /* 프로필 이미지 미리보기 스타일 */
+        .profile-image-preview {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%; /* 원형 */
+            object-fit: cover; /* 이미지가 잘리지 않도록 */
+            border: 2px solid #D1D5DB;
+            background-color: #F3F4F6; /* 기본 배경색 */
             display: flex;
-            gap: 8px; /* 입력 필드와 버튼 사이 간격 */
-            width: 100%;
+            justify-content: center;
+            align-items: center;
+            font-size: 0.875rem; /* 14px */
+            color: #6B7280;
+            margin: 0 auto 1rem; /* 중앙 정렬 및 하단 여백 */
+            cursor: pointer; /* 클릭 가능 표시 */
         }
+
+        .profile-image-preview img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+        }
+
+        /* 파일 입력 숨기기 */
+        .file-input-hidden {
+            display: none;
+        }
+
+        /* ID 표시 및 재생성 버튼 그룹 */
+        .id-display-group {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: #F3F4F6;
+            padding: 12px 16px;
+            border-radius: 14px;
+            margin-bottom: 12px;
+        }
+
+        .generated-id-text {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #333333;
+        }
+
+        .regenerate-id-button {
+            background-color: transparent;
+            border: 1px solid #3B82F6;
+            color: #3B82F6;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .regenerate-id-button:hover {
+            background-color: #EBF5FF; /* 연한 파란색 배경 */
+        }
+
     </style>
 </head>
 <body>
@@ -234,7 +254,7 @@
         <!-- 로고 및 텍스트 블록 -->
         <div class="logo-text-block">
             <!-- 부산남중학교 로고 이미지 (실제 이미지 경로로 대체 필요) -->
-            <img src="/images/simbol.png" alt="부산남중학교 로고" class="logo-image mx-auto">
+            <img src="https://placehold.co/48x48/000000/FFFFFF?text=Logo" alt="MateTalk 로고" class="logo-image mx-auto">
             <h1 class="main-title">MateTalk</h1>
             <p class="subtitle" id="subtitleText">로그인 방식을 선택하세요.</p>
         </div>
@@ -270,37 +290,21 @@
 
         <!-- 사용자 정보 설정 섹션 (초기에는 숨김) -->
         <div id="userInfoSetupSection" class="button-section hidden">
-            <!-- "학생 정보 설정" 텍스트 제거됨 -->
-
-            <!-- 학교 검색 관련 UI -->
-            <div class="school-search-container mb-3">
-                <label for="selectedSchoolDisplay" class="block text-gray-700 text-sm font-bold mb-2">선택된 학교:</label>
-                <div id="selectedSchoolDisplay" class="input-field mb-3 flex items-center justify-between min-h-[48px] rounded-md">
-                    <span id="selectedSchoolName" class="text-gray-700">학교를 검색하여 선택해주세요.</span>
-                    <button id="resetSchoolSelection" class="text-red-500 hover:text-red-700 text-sm font-semibold p-2 rounded-full hidden" title="선택된 학교 초기화">
-                        &times;
-                    </button>
-                </div>
-                <div class="search-input-group mb-2">
-                    <input type="text" id="schoolSearchInput" placeholder="학교 이름을 입력하고 검색" class="input-field flex-grow">
-                    <button id="searchSchoolButton" class="action-button w-auto px-4 py-2">검색</button>
-                </div>
-                <div id="schoolSearchResults" class="hidden">
-                    <!-- 검색 결과가 여기에 표시됩니다 -->
-                </div>
-                <!-- 선택된 학교의 교육청코드와 행정표준코드를 저장할 hidden 필드 -->
-                <input type="hidden" id="atptOfcdcScCodeInput">
-                <input type="hidden" id="sdSchulCodeInput">
+            <!-- 프로필 이미지 업로드 및 미리보기 -->
+            <input type="file" id="profileImageInput" accept="image/*" class="file-input-hidden">
+            <div id="profileImagePreview" class="profile-image-preview" title="프로필 이미지 업로드">
+                <img id="previewImage" src="https://placehold.co/100x100/CCCCCC/FFFFFF?text=Upload" alt="프로필 이미지 미리보기">
             </div>
 
-            <select id="gradeSelect" class="input-field mb-3">
-                <option value="">학년 선택</option>
-                <option value="1">1학년</option>
-                <option value="2">2학년</option>
-                <option value="3">3학년</option>
-            </select>
-            <input type="number" id="classInput" placeholder="반 (예: 1)" class="input-field mb-3">
-            <input type="number" id="studentNumInput" placeholder="번 (예: 10)" class="input-field mb-3">
+            <input type="text" id="userNameInput" placeholder="이름을 입력하세요" class="input-field mb-3">
+            <textarea id="statusMessageInput" placeholder="상태 메시지를 입력하세요 (예: 안녕하세요!)" class="input-field mb-3 h-24 resize-none"></textarea>
+
+            <!-- ID 자동 생성 및 표시 -->
+            <div class="id-display-group">
+                <span class="generated-id-text" id="generatedIdDisplay">ID 생성 중...</span>
+                <button id="regenerateIdButton" class="regenerate-id-button">재생성</button>
+            </div>
+
             <button id="saveUserInfoButton" class="action-button mt-4">저장</button>
         </div>
 
@@ -313,7 +317,7 @@
             <!-- 모달 콘텐츠 박스 -->
             <div id="modalContentBox" class="bg-white p-8 rounded-xl shadow-lg w-11/12 max-w-sm text-center modal-transition modal-hidden-state">
                 <!-- 경고 아이콘 -->
-                <img src="/images/warning.png" alt="경고 아이콘" class="mx-auto mb-4 w-16 h-16">
+                <img src="https://placehold.co/64x64/FFD700/000000?text=! " alt="경고 아이콘" class="mx-auto mb-4 w-16 h-16">
                 <h2 class="text-xl font-semibold text-gray-800 mb-6">계정이 있으신가요?</h2>
                 <!-- 버튼을 가로로 정렬하기 위한 새로운 컨테이너 -->
                 <div class="modal-buttons-container">
@@ -328,18 +332,14 @@
         // 전역 변수로 Firebase 설정 주입 (Canvas 환경에서 제공)
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
         const firebaseConfig = {
-            apiKey: "AIzaSyC_SHRcQ9hXmjVbP3km4rdR4UvKIoqpLHo",
-            authDomain: "n-mate.firebaseapp.com",
-            projectId: "n-mate",
-            storageBucket: "n-mate.firebasestorage.app",
-            appId: "1:691313471077:web:3066aaeca0a1d9e448e08c",
-            measurementId: "G-0LCGVBKXLQ",
-            messagingSenderId: "691313471077"
+            apiKey: "AIzaSyALUv0zMoBExmhZJd2idSfmB_-DbPAAdL8",
+            authDomain: "grind-mate-a.firebaseapp.com",
+            projectId: "grind-mate-a",
+            storageBucket: "grind-mate-a.firebasestorage.app",
+            messagingSenderId: "704910171892",
+            appId: "1:704910171892:web:908b2b625e46aa7a5e48a1",
+            measurementId: "G-WQH66CMVP1"
         };
-
-        // NEIS API 설정 (사용자 제공)
-        const NEIS_API_KEY = "cbb4da48e87445f68c2732368454ebc3"; // 이 인증키를 유효한 키로 교체해야 합니다.
-        const NEIS_API_ENDPOINT = "https://open.neis.go.kr/hub/schoolInfo";
 
         // Firebase app 및 auth, firestore 인스턴스
         let app;
@@ -372,19 +372,15 @@
         const signUpButton = document.getElementById('signUpButton');
         const backToLoginButton = document.getElementById('backToLoginButton');
 
-        // 사용자 정보 설정 관련 DOM 요소
+        // 사용자 정보 설정 관련 DOM 요소 (업데이트됨)
         const userInfoSetupSection = document.getElementById('userInfoSetupSection');
-        const schoolSearchInput = document.getElementById('schoolSearchInput'); // 학교 검색 입력 필드
-        const searchSchoolButton = document.getElementById('searchSchoolButton'); // 학교 검색 버튼
-        const schoolSearchResults = document.getElementById('schoolSearchResults'); // 학교 검색 결과 표시 영역
-        const selectedSchoolDisplay = document.getElementById('selectedSchoolDisplay'); // 선택된 학교 표시 영역
-        const selectedSchoolName = document.getElementById('selectedSchoolName'); // 선택된 학교 이름 텍스트
-        const resetSchoolSelection = document.getElementById('resetSchoolSelection'); // 학교 선택 초기화 버튼
-        const atptOfcdcScCodeInput = document.getElementById('atptOfcdcScCodeInput'); // 교육청 코드 hidden 필드
-        const sdSchulCodeInput = document.getElementById('sdSchulCodeInput'); // 행정표준코드 hidden 필드
-        const gradeSelect = document.getElementById('gradeSelect');
-        const classInput = document.getElementById('classInput');
-        const studentNumInput = document.getElementById('studentNumInput');
+        const profileImageInput = document.getElementById('profileImageInput');
+        const profileImagePreview = document.getElementById('profileImagePreview');
+        const previewImage = document.getElementById('previewImage');
+        const userNameInput = document.getElementById('userNameInput');
+        const statusMessageInput = document.getElementById('statusMessageInput');
+        const generatedIdDisplay = document.getElementById('generatedIdDisplay');
+        const regenerateIdButton = document.getElementById('regenerateIdButton');
         const saveUserInfoButton = document.getElementById('saveUserInfoButton');
 
 
@@ -448,7 +444,7 @@
                 return null;
             }
             // Firestore 보안 규칙에 따라 artifacts/{appId}/users/{userId}/profile/user_data 경로 사용
-            const userProfileRef = db.collection(`artifacts/${appId}/users/${userId}/profile`).doc('user_data');
+            const userProfileRef = db.collection('artifacts').doc(appId).collection('users').doc(userId).collection('profile').doc('user_data');
             try {
                 const doc = await userProfileRef.get();
                 if (doc.exists) {
@@ -464,25 +460,32 @@
             }
         }
 
-        // 사용자 정보를 Firestore에 저장하는 함수
-        async function saveUserProfile(userId, schoolName, atptOfcdcScCode, sdSchulCode, grade, classNum, studentNum) {
+        // 사용자 정보를 Firestore에 저장하는 함수 (업데이트됨)
+        async function saveUserProfile(userId, profileImageBase64, name, statusMessage, generatedId) {
             if (!db) {
                 console.error('Firestore 인스턴스가 초기화되지 않았습니다.');
                 return false;
             }
             // Firestore 보안 규칙에 따라 artifacts/{appId}/users/{userId}/profile/user_data 경로 사용
-            const userProfileRef = db.collection(`artifacts/${appId}/users/${userId}/profile`).doc('user_data');
+            const userProfileRef = db.collection('artifacts').doc(appId).collection('users').doc(userId).collection('profile').doc('user_data');
             try {
                 await userProfileRef.set({
-                    schoolName: schoolName,
-                    atptOfcdcScCode: atptOfcdcScCode, // 교육청 코드 저장
-                    sdSchulCode: sdSchulCode,         // 행정표준코드 저장
-                    grade: parseInt(grade),
-                    classNum: parseInt(classNum),
-                    studentNum: parseInt(studentNum),
+                    profileImageBase64: profileImageBase64,
+                    name: name,
+                    statusMessage: statusMessage,
+                    generatedId: generatedId,
                     updatedAt: firebase.firestore.FieldValue.serverTimestamp() // 서버 타임스탬프 추가
                 }, { merge: true }); // 기존 데이터가 있다면 병합
-                console.log('사용자 프로필 저장 성공:', { userId, schoolName, atptOfcdcScCode, sdSchulCode, grade, classNum, studentNum });
+                console.log('사용자 프로필 저장 성공:', { userId, name, generatedId });
+
+                // 생성된 ID를 public collection에 저장하여 중복 확인에 사용
+                const publicUserIdRef = db.collection('artifacts').doc(appId).collection('public').collection('user_ids').doc(generatedId);
+                await publicUserIdRef.set({
+                    userId: userId,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                }, { merge: true });
+                console.log('공개 ID 저장 성공:', generatedId);
+
                 return true;
             } catch (error) {
                 console.error('사용자 프로필 저장 오류:', error);
@@ -491,116 +494,65 @@
             }
         }
 
-        // NEIS API를 호출하여 학교 정보를 검색하는 함수
-        async function searchSchool(schoolNameQuery) {
-            schoolSearchResults.classList.add('hidden'); // 이전 결과 숨기기
-            schoolSearchResults.innerHTML = ''; // 이전 결과 지우기
-            showMessage('학교를 검색 중입니다...', false); // 로딩 메시지
-            resetSchoolSelection.classList.add('hidden'); // 검색 시작 시 초기화 버튼 숨김
-
-            if (!schoolNameQuery) {
-                showMessage('학교 이름을 입력해주세요.', true);
-                return;
-            }
-
-            try {
-                // SCHUL_KND_SC_NM=중학교 파라미터를 추가하여 중학교만 검색하도록 수정
-                const url = `${NEIS_API_ENDPOINT}?KEY=${NEIS_API_KEY}&Type=json&pIndex=1&pSize=5&SCHUL_NM=${encodeURIComponent(schoolNameQuery)}&SCHUL_KND_SC_NM=${encodeURIComponent('중학교')}`;
-                console.log('NEIS API 요청 URL:', url);
-
-                const response = await fetch(url);
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                const data = await response.json();
-                console.log('NEIS API 응답 데이터:', data);
-
-                hideMessageBox(); // 로딩 메시지 숨기기
-
-                if (data && data.schoolInfo && data.schoolInfo[1] && data.schoolInfo[1].row) {
-                    const schools = data.schoolInfo[1].row;
-                    displaySearchResults(schools);
-                } else if (data && data.RESULT && data.RESULT.CODE === 'INFO-200') {
-                    // INFO-200: 해당 자료는 존재하지 않습니다.
-                    showMessage('검색 결과가 없습니다. 정확한 중학교 이름을 입력해주세요.', true); // 중학교 검색 메시지로 수정
-                } else {
-                    showMessage('학교 정보를 가져오는 데 실패했습니다. 잠시 후 다시 시도해주세요.', true);
-                    console.error('예상치 못한 NEIS API 응답 구조:', data);
-                }
-            } catch (error) {
-                console.error('NEIS API 호출 오류:', error);
-                showMessage('학교 검색 중 오류가 발생했습니다. 네트워크 연결을 확인하거나 다시 시도해주세요.', true);
+        // 프로필 이미지 업로드 처리 함수
+        function handleImageUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    previewImage.src = e.target.result; // 미리보기 이미지 업데이트
+                    previewImage.dataset.base64 = e.target.result; // Base64 데이터를 dataset에 저장
+                };
+                reader.readAsDataURL(file); // 파일을 Base64로 읽기
             }
         }
 
-        // 검색 결과를 UI에 표시하는 함수
-        function displaySearchResults(schools) {
-            schoolSearchResults.innerHTML = ''; // 기존 결과 지우기
-            if (schools.length === 0) {
-                showMessage('검색 결과가 없습니다. 다시 시도해주세요.', true);
-                schoolSearchResults.classList.add('hidden');
-                return;
+        // 고유 ID 생성 함수 (알파벳 1자리 + 숫자 4자리)
+        async function generateUniqueUserId() {
+            if (!db) {
+                console.error('Firestore 인스턴스가 초기화되지 않았습니다.');
+                return null;
             }
 
-            schools.forEach(school => {
-                const schoolDiv = document.createElement('div');
-                schoolDiv.textContent = `${school.SCHUL_NM} (${school.LCTN_SC_NM || ''})`; // 학교명 (시도명)
-                schoolDiv.classList.add('px-4', 'py-2', 'cursor-pointer', 'hover:bg-gray-100', 'border-b', 'border-gray-200', 'rounded-md');
-                schoolDiv.dataset.atptOfcdcScCode = school.ATPT_OFCDC_SC_CODE;
-                schoolDiv.dataset.sdSchulCode = school.SD_SCHUL_CODE;
-                schoolDiv.dataset.schoolName = school.SCHUL_NM; // 선택 시 학교 이름도 저장
-                schoolDiv.tabIndex = 0; // 키보드 접근성 위해 추가
+            let newId = '';
+            let isUnique = false;
+            let attempts = 0;
+            const maxAttempts = 10; // 최대 시도 횟수
 
-                schoolDiv.addEventListener('click', () => {
-                    selectSchool(schoolDiv);
-                });
+            while (!isUnique && attempts < maxAttempts) {
+                // 알파벳 1자리 생성 (A-Z)
+                const randomChar = String.fromCharCode(65 + Math.floor(Math.random() * 26));
+                // 숫자 4자리 생성 (0000-9999)
+                const randomNum = Math.floor(1000 + Math.random() * 9000); // 1000-9999 범위
+                newId = `${randomChar}${randomNum}`;
 
-                // Enter 키로 선택 가능하게 하기
-                schoolDiv.addEventListener('keydown', (event) => {
-                    if (event.key === 'Enter') {
-                        selectSchool(schoolDiv);
+                // Firestore에서 중복 확인
+                const publicUserIdRef = db.collection('artifacts').doc(appId).collection('public').collection('user_ids').doc(newId);
+                try {
+                    const doc = await publicUserIdRef.get();
+                    if (!doc.exists) {
+                        isUnique = true;
+                    } else {
+                        console.log(`ID ${newId}는 이미 사용 중입니다. 다시 생성합니다.`);
                     }
-                });
+                } catch (error) {
+                    console.error('ID 중복 확인 오류:', error);
+                    showMessage('ID 생성 중 오류가 발생했습니다. 다시 시도해주세요.', true);
+                    return null; // 오류 발생 시 null 반환
+                }
+                attempts++;
+            }
 
-                schoolSearchResults.appendChild(schoolDiv);
-            });
-            schoolSearchResults.classList.remove('hidden'); // 결과 표시
+            if (!isUnique) {
+                showMessage('고유 ID를 생성하는 데 실패했습니다. 다시 시도해주세요.', true);
+                return null;
+            }
+
+            generatedIdDisplay.textContent = newId;
+            console.log('생성된 고유 ID:', newId);
+            return newId;
         }
 
-        // 학교를 선택하고 hidden 필드를 업데이트하는 함수
-        function selectSchool(selectedSchoolDiv) {
-            const schoolName = selectedSchoolDiv.dataset.schoolName;
-            const atptOfcdcScCode = selectedSchoolDiv.dataset.atptOfcdcScCode;
-            const sdSchulCode = selectedSchoolDiv.dataset.sdSchulCode;
-
-            selectedSchoolName.textContent = schoolName; // 선택된 학교 이름 표시
-            atptOfcdcScCodeInput.value = atptOfcdcScCode; // hidden 필드에 값 저장
-            sdSchulCodeInput.value = sdSchulCode;         // hidden 필드에 값 저장
-
-            schoolSearchInput.value = ''; // 검색창 초기화
-            schoolSearchResults.classList.add('hidden'); // 검색 결과 숨기기
-            // showMessage(`${schoolName}이(가) 선택되었습니다.`, false); // 이 라인 삭제
-            resetSchoolSelection.classList.remove('hidden'); // 초기화 버튼 표시
-            schoolSearchInput.classList.add('hidden'); // 검색 입력 필드 숨김
-            searchSchoolButton.classList.add('hidden'); // 검색 버튼 숨김
-            selectedSchoolDisplay.classList.remove('hidden'); // 선택된 학교 표시 보이게
-
-            console.log('학교 선택됨:', { schoolName, atptOfcdcScCode, sdSchulCode });
-        }
-
-        // 학교 선택 초기화 함수
-        function resetSelectedSchool() {
-            selectedSchoolName.textContent = '학교를 검색하여 선택해주세요.';
-            atptOfcdcScCodeInput.value = '';
-            sdSchulCodeInput.value = '';
-            resetSchoolSelection.classList.add('hidden');
-            schoolSearchInput.value = '';
-            schoolSearchInput.classList.remove('hidden');
-            searchSchoolButton.classList.remove('hidden');
-            schoolSearchResults.classList.add('hidden');
-            hideMessageBox();
-            console.log('학교 선택 초기화됨.');
-        }
 
         document.addEventListener('DOMContentLoaded', async () => {
             console.log('DOMContentLoaded 이벤트 발생. 앱 초기화 시작.');
@@ -618,41 +570,28 @@
                         if (user) {
                             console.log('onAuthStateChanged: 사용자 로그인됨 (UID):', user.uid);
                             const profile = await getUserProfile(user.uid);
-                            if (profile && profile.schoolName && profile.atptOfcdcScCode && profile.sdSchulCode && profile.grade && profile.classNum && profile.studentNum) {
+                            // 새로운 프로필 필드 (generatedId, name, statusMessage)가 모두 있는지 확인
+                            if (profile && profile.generatedId && profile.name && profile.statusMessage) {
                                 // 프로필이 있으면 메인으로 이동 (로그인 완료)
                                 window.location.href = '/';
                             } else {
-                                // 프로필이 없으면 정보 설정 화면으로 이동 (최초 로그인/회원가입 후)
+                                // 프로필이 없거나 불완전하면 정보 설정 화면으로 이동 (최초 로그인/회원가입 후)
                                 hideAllAuthSections();
                                 userInfoSetupSection.classList.remove('hidden');
-                                subtitleText.textContent = '학교, 학년, 반, 번호를 설정해주세요.';
+                                subtitleText.textContent = '프로필을 설정해주세요.';
                                 // 기존 정보가 있다면 입력 필드에 채우기
                                 if (profile) {
-                                    if (profile.schoolName && profile.atptOfcdcScCode && profile.sdSchulCode) {
-                                        selectedSchoolName.textContent = profile.schoolName;
-                                        atptOfcdcScCodeInput.value = profile.atptOfcdcScCode;
-                                        sdSchulCodeInput.value = profile.sdSchulCode;
-                                        resetSchoolSelection.classList.remove('hidden');
-                                        schoolSearchInput.classList.add('hidden');
-                                        searchSchoolButton.classList.add('hidden');
-                                        selectedSchoolDisplay.classList.remove('hidden');
-                                    } else {
-                                        selectedSchoolName.textContent = '학교를 검색하여 선택해주세요.';
-                                        selectedSchoolDisplay.classList.remove('hidden'); // 선택된 학교 표시 보이게
-                                        schoolSearchInput.classList.remove('hidden');
-                                        searchSchoolButton.classList.remove('hidden');
-                                        resetSchoolSelection.classList.add('hidden');
+                                    userNameInput.value = profile.name || '';
+                                    statusMessageInput.value = profile.statusMessage || '';
+                                    generatedIdDisplay.textContent = profile.generatedId || 'ID 생성 중...';
+                                    if (profile.profileImageBase64) {
+                                        previewImage.src = profile.profileImageBase64;
+                                        previewImage.dataset.base64 = profile.profileImageBase64;
                                     }
-                                    gradeSelect.value = profile.grade || '';
-                                    classInput.value = profile.classNum || '';
-                                    studentNumInput.value = profile.studentNum || '';
-                                } else {
-                                    // 프로필이 전혀 없으면 초기 상태로 설정
-                                    selectedSchoolName.textContent = '학교를 검색하여 선택해주세요.';
-                                    selectedSchoolDisplay.classList.remove('hidden'); // 선택된 학교 표시 보이게
-                                    schoolSearchInput.classList.remove('hidden');
-                                    searchSchoolButton.classList.remove('hidden');
-                                    resetSchoolSelection.classList.add('hidden');
+                                }
+                                // ID가 없으면 새로 생성
+                                if (!profile || !profile.generatedId) {
+                                    await generateUniqueUserId();
                                 }
                             }
                         } else {
@@ -823,8 +762,9 @@
                         // 회원가입 성공 후 항상 사용자 정보 설정 화면으로 이동 (최초 1회)
                         hideAllAuthSections();
                         userInfoSetupSection.classList.remove('hidden');
-                        subtitleText.textContent = '학교, 학년, 반, 번호를 설정해주세요.';
-                        schoolSearchInput.focus(); // 학교 이름 입력 필드에 포커스
+                        subtitleText.textContent = '프로필을 설정해주세요.';
+                        await generateUniqueUserId(); // 회원가입 성공 시 ID 자동 생성
+                        userNameInput.focus(); // 이름 입력 필드에 포커스
 
                     } catch (error) {
                         console.error('회원가입 오류:', error);
@@ -857,40 +797,38 @@
                 });
             }
 
-            // 학교 검색 버튼 클릭 이벤트
-            if (searchSchoolButton) {
-                searchSchoolButton.addEventListener('click', () => {
-                    searchSchool(schoolSearchInput.value.trim());
+            // 프로필 이미지 미리보기 클릭 시 파일 입력 열기
+            if (profileImagePreview) {
+                profileImagePreview.addEventListener('click', () => {
+                    profileImageInput.click();
                 });
             }
 
-            // 학교 검색 입력 필드에서 Enter 키 눌렀을 때
-            if (schoolSearchInput) {
-                schoolSearchInput.addEventListener('keydown', (event) => {
-                    if (event.key === 'Enter') {
-                        searchSchool(schoolSearchInput.value.trim());
-                    }
+            // 프로필 이미지 파일 선택 시 미리보기 업데이트
+            if (profileImageInput) {
+                profileImageInput.addEventListener('change', handleImageUpload);
+            }
+
+            // ID 재생성 버튼 클릭 이벤트
+            if (regenerateIdButton) {
+                regenerateIdButton.addEventListener('click', async () => {
+                    generatedIdDisplay.textContent = 'ID 생성 중...';
+                    await generateUniqueUserId();
                 });
             }
 
-            // 학교 선택 초기화 버튼 클릭 이벤트
-            if (resetSchoolSelection) {
-                resetSchoolSelection.addEventListener('click', resetSelectedSchool);
-            }
 
-            // 사용자 정보 저장 버튼 클릭 이벤트
+            // 사용자 정보 저장 버튼 클릭 이벤트 (업데이트됨)
             if (saveUserInfoButton) {
                 saveUserInfoButton.addEventListener('click', async () => {
                     console.log('사용자 정보 저장 버튼 클릭됨.');
-                    const schoolName = selectedSchoolName.textContent.trim(); // 표시된 학교 이름 사용
-                    const atptOfcdcScCode = atptOfcdcScCodeInput.value.trim(); // hidden 필드에서 교육청 코드 가져오기
-                    const sdSchulCode = sdSchulCodeInput.value.trim();         // hidden 필드에서 행정표준코드 가져오기
-                    const grade = gradeSelect.value;
-                    const classNum = classInput.value;
-                    const studentNum = studentNumInput.value;
+                    const profileImageBase64 = previewImage.dataset.base64 || ''; // dataset에서 Base64 데이터 가져오기
+                    const name = userNameInput.value.trim();
+                    const statusMessage = statusMessageInput.value.trim();
+                    const generatedId = generatedIdDisplay.textContent.trim();
 
-                    if (!schoolName || schoolName === '학교를 검색하여 선택해주세요.' || !atptOfcdcScCode || !sdSchulCode || !grade || !classNum || !studentNum) {
-                        showMessage('학교 검색 후 선택하고, 학년, 반, 번호를 모두 입력해주세요.', true);
+                    if (!name || !generatedId || generatedId === 'ID 생성 중...') {
+                        showMessage('이름과 ID를 입력하거나 생성해주세요.', true);
                         return;
                     }
 
@@ -901,20 +839,13 @@
                     }
 
                     const userId = auth.currentUser.uid;
-                    const success = await saveUserProfile(userId, schoolName, atptOfcdcScCode, sdSchulCode, grade, classNum, studentNum); // 새로운 필드 전달
+                    const success = await saveUserProfile(userId, profileImageBase64, name, statusMessage, generatedId);
 
                     if (success) {
-                        showMessage('학생 정보가 성공적으로 저장되었습니다!', false);
-                        console.log('학생 정보 저장 완료. 로그인 탭으로 이동.');
-                        // 저장 성공 시 메인 페이지 대신 초기 로그인 화면으로 돌아감
-                        hideAllAuthSections();
-                        initialButtons.classList.remove('hidden');
-                        subtitleText.textContent = '로그인 방식을 선택하세요.';
-                        // 입력 필드 초기화 (선택된 학교 정보 포함)
-                        resetSelectedSchool(); // 학교 선택 초기화 함수 호출
-                        gradeSelect.value = '';
-                        classInput.value = '';
-                        studentNumInput.value = '';
+                        showMessage('프로필 정보가 성공적으로 저장되었습니다!', false);
+                        console.log('프로필 정보 저장 완료. 메인 페이지로 이동.');
+                        // 저장 성공 시 메인 페이지로 이동
+                        window.location.href = '/';
                     }
                     // 실패 메시지는 saveUserProfile 함수 내에서 처리
                 });
